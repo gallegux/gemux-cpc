@@ -1,7 +1,7 @@
 /*___________________________________________________________________________
 |                                                                            |
 |  GEMUX-CPC - Amstrad CPC emulator                                          |
-|  PPI implementation                                                        |
+|  Generic device implementation                                                        |
 |                                                                            |
 |  Copyright (c) 2024 Gallegux (gallegux@gmail.com)                          |
 |                                                                            |
@@ -48,8 +48,16 @@ public:
 };
 
 
-class InterrupcionAtendida
+class ReceptorInterrupcionAtendida
 {
 public:
-    virtual void hecho() = 0;
+    virtual void notificarInterrupcionAtendida() = 0;
+};
+
+
+class DisplayInt
+{
+public:
+    virtual void startInt() = 0;
+    virtual void endInt() = 0;
 };

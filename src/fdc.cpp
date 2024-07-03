@@ -22,12 +22,12 @@
 |  the author and providing a link to the original repository.               |
 |___________________________________________________________________________*/
 
+#include <fstream>
 #include <stdio.h>
 #include "tipos.h"
 #include "fdc.h"
 #include "log.h"
 #include "dsk.h"
-#include "minivector.h"
 #include "util.h"
 
 
@@ -37,6 +37,7 @@
 
 #define SET4(_a,_v) { for (u8 i=0; i<4; i++) _a[i]=_v; }
 #define PRINT4(_a) { for (u8 i=0; i<4; i++) debug_fdc("%d",_a[i]); debug_fdc("\n"); }
+
 
 
 void printInputBytes(BYTE* bs, u8 _numBytesEntrada) {
@@ -163,9 +164,9 @@ void FDC:: out_FB7F(BYTE dato) {
             case CMD_READ_DATA:             prepareCommandFDC(9, 7, 1,&FDC::readData); break; // read data
             case CMD_RECALIBRATE:           prepareCommandFDC(2, 0, 0,&FDC::recalibrate); break; // 0x7
             case CMD_SESE_INTERRUPT_STATUS: prepareCommandFDC(1, 2, 0,&FDC::senseInterruptStaus); break;// sense interrupt status
-            case CMD_WRITE_DELETED_DATA:    prepareCommandFDC(9, 7, 1,&FDC::writeData/*writeDeletedData*/); break; // write deleted data
+            case CMD_WRITE_DELETED_DATA:    prepareCommandFDC(9, 7, 1,&FDC::writeDeletedData); break; // write deleted data
             case CMD_READ_ID:               prepareCommandFDC(2, 7, 1,&FDC::readId); break;// 0xA
-            case CMD_READ_DELETED_DATA:     prepareCommandFDC(9, 7, 1,&FDC::readData/*readDeletedData*/); break; // read deleted data
+            case CMD_READ_DELETED_DATA:     prepareCommandFDC(9, 7, 1,&FDC::readDeletedData); break; // read deleted data
             case CMD_FORMAT_TRACK:          prepareCommandFDC(6, 7, 1,&FDC::formatTrack); break;// format a track
             case CMD_SEEK:                  prepareCommandFDC(3, 0, 0,&FDC::seek); break; // 0xF
             case CMD_SCAN_EQUAL:            prepareCommandFDC(9, 7, 1,&FDC::scanEqual); break;// scan equal
@@ -189,20 +190,19 @@ void FDC:: out_FB7F(BYTE dato) {
         }
     }
     else if (fase == FASE_EJECUCION) {
-        if (comando == CMD_WRITE_DATA  ||  comando == CMD_WRITE_DELETED_DATA) {
-            *puntBuffer = dato;
-            //debug_fdc("FDC:: write %02X\t", dato);
-            if (++puntBuffer == finBuffer) {
-                //debug_fdc("DATOS WRITE: ");
-                //printBuffer();
-                debug_fdc("\nFDC:: writeSector pista=%d cabezal=%d sector=%02X\n", p_pista, p_cabezal, p_sector);
-                //disk[p_unidad]->writeSector(p_pista, p_cabezal, p_sector, buffer);
-                activeDsk->writeSectorData(p_tamSector << 8, buffer);
-                delete buffer;
-                bytesCopiados = true;
-                fase = FASE_RESULTADO;
-                dio = FDC_A_CPU; // los siguientes datos seran la transferencia del resultado
-            }
+        switch (comando) {
+            case CMD_WRITE_DATA:
+            case CMD_WRITE_DELETED_DATA:
+                writeData_execution(dato);
+                break;
+            case CMD_FORMAT_TRACK:
+                formatTrack_execution(dato);
+                break;
+            case CMD_SCAN_EQUAL:
+            case CMD_SCAN_LOW_OR_EQUAL:
+            case CMD_SCAN_HIGH_OR_EQUAL:
+                scan_execution(dato);
+                break;
         }
     }
 }
@@ -221,6 +221,9 @@ bool FDC:: IN(WORD puerto, BYTE* dato) {
             // este devuelve el array de salida
             if (fase == FASE_RESULTADO) {
                 *dato = bytesSalida[contBytesSalida];
+                if (comando == CMD_FORMAT_TRACK) {
+                    debug_fdc("FDC:: IN <- %02X\n", *dato);
+                }
                 if (++contBytesSalida == numBytesSalida) {
                     f_fdcBusy = false;
                     fase = LIBRE;
@@ -279,7 +282,7 @@ BYTE FDC:: getMainStatusReg() {
         if (f_driveBusy[i])  estado |= bit;
         bit = bit << 1;
     }
-    debug_fdc("FDC:: MSR = %02X\n", estado);
+    //debug_fdc("FDC:: MSR = %02X\n", estado);
     return estado;
 }
 
@@ -318,7 +321,7 @@ void FDC:: setOutputBytes_RS012_CHRN(BYTE pista, BYTE cabezal, BYTE sector, BYTE
 }
 
 
-// 02
+// REVISAR!!!!!!!!!!!
 void FDC:: readTrack() {
     debug_fdc("FDC:: readTrack()\n");
     fase = FASE_EJECUCION;
@@ -364,20 +367,23 @@ void FDC:: senseDriveStatus() {
     // HU
     getDriveHead();
     debug_fdc("\tunidad=%d cabezal=%d\n", p_unidad, p_cabezal);
-    FLUSH;
+    
     BYTE reg3 = p_unidad;
-    if (p_cabezal) reg3 |= R3_HD_HEAD_ADDRESS;
 
     if (activeDsk == nullptr) {
-        reg3 |= R3_WP_WRITE_PROTECTED; //cuando no hay disco devuelve ese bit a 1 (digo yo que deberia ser el bit 7 o 5)
+        reg3 |= R3_FT_FAULT;
     }
     else {
+        if (p_cabezal) reg3 |= R3_HD_HEAD_ADDRESS;
         if (activeDsk->getSides() == 2) reg3 |= R3_TS_TWO_SIDE;
-        if (p_pista == 0) reg3 |= R3_T0_TRACK_0; // como si siempre estuviera en la pista 0 a la hora de consulta
+        if (activeTrack[p_unidad] == 0) reg3 |= R3_T0_TRACK_0;
         reg3 |= R3_RY_READY;
         if (activeDsk->isProtected()) reg3 |= R3_WP_WRITE_PROTECTED;
     }
+    debug_fdc("FDC:: reg_estado_3 = %02X\n", reg3);
+
     bytesSalida[0] = reg3;
+
     dio = FDC_A_CPU;
     fase = FASE_RESULTADO;
     f_fdcBusy = true;
@@ -416,6 +422,28 @@ void FDC:: writeData() {
     setOutputBytes_RS012_CHRN(p_pista, p_cabezal, p_sector, p_tamSector);
 }
 
+void FDC:: writeData_execution(BYTE dato) {
+    // llenar en buffer
+    *puntBuffer = dato;
+    //debug_fdc("FDC:: write %02X\t", dato);
+    if (++puntBuffer == finBuffer) {
+        //debug_fdc("DATOS WRITE: ");
+        //printBuffer();
+        debug_fdc("\nFDC:: writeSector pista=%d cabezal=%d sector=%02X\n", p_pista, p_cabezal, p_sector);
+        //disk[p_unidad]->writeSector(p_pista, p_cabezal, p_sector, buffer);
+        activeDsk->writeSectorData(p_tamSector << 8, buffer);
+        delete buffer;
+        bytesCopiados = true;
+        fase = FASE_RESULTADO;
+        dio = FDC_A_CPU; // los siguientes datos seran la transferencia del resultado
+    }
+}
+
+void FDC:: writeDeletedData() {
+    debug_fdc("FDC:: ---------- writeDeletedData()\n");
+    writeData();
+}
+
 
 void FDC:: readData() {
     // puede leer varios sectores
@@ -438,7 +466,7 @@ void FDC:: readData() {
         setOutputBytes_RS012_CHRN(0,0,0,0);
         return;
     }
-    else if (activeDsk->existsTrack(p_pista, p_cabezal)) {
+    else if (activeDsk->existsTrack(p_pista)) {     // }, p_cabezal)) {
         T_DskTrackInfo trackInfo;
         activeDsk->getTrackInfo(p_pista, p_cabezal, &trackInfo);
         //debug_fdc("FDC:: readData() numero de sectores en la pista=%d\n", trackInfo.sectors);
@@ -486,6 +514,11 @@ void FDC:: readData() {
     }
     regEstado0 |= p_unidad;
     setOutputBytes_RS012_CHRN(p_pista, p_cabezal, p_sector, p_tamSector);
+}
+
+void FDC:: readDeletedData() {
+    debug_fdc("FDC:: ---------- readDeletedData()\n");
+    readData();
 }
 
 
@@ -556,14 +589,6 @@ void FDC:: senseInterruptStaus() {
 }
 
 
-/*
-void FDC:: writeDeletedData() {
-    debug_fdc("FDC:: ---------- writeDeletedData()\n");
-    getParams_CHRN_EOT_GPL_DTL();
-    dio = CPU_A_FDC;
-
-    setOutputBytes_RS012_CHRN(p_pista, p_cabezal, p_sector, p_tamSector);
-}*/
 
 
 void FDC:: readId() {
@@ -587,7 +612,7 @@ void FDC:: readId() {
     //    regEstado1 = R1_MA_MISSING_ADDRESS_MARK;
     //    setOutputBytes_RS012_CHRN(0,0,0,0);
     //}
-    else if (!activeDsk->existsTrack(p_pista, p_cabezal)) { // pista no encontrada
+    else if (!activeDsk->existsTrackSide(p_pista, p_cabezal)) { // pista no encontrada
         debug_fdc("FDC:: readId() pista no existe\n");
         regEstado0 = R0_IC_COMANDO_INTERRUMPIDO;
         regEstado1 = R1_MA_MISSING_ADDRESS_MARK;
@@ -618,16 +643,9 @@ void FDC:: readId() {
 }
 
 
-/*
-void FDC:: readDeletedData() {
-    debug_fdc("FDC:: ---------- readDeletedData()\n");
-    getParams_CHRN_EOT_GPL_DTL();
-    dio = FDC_A_CPU;
 
-    setOutputBytes_RS012_CHRN(p_pista, p_cabezal, p_sector, p_tamSector);
-} */
 
-u8 pista_formateo = 255;
+// TODO: contemplar errores, y reconstruir
 void FDC:: formatTrack() {
     debug_fdc("FDC:: ---------- formatTrack()\n");
     getDriveHead();
@@ -636,30 +654,54 @@ void FDC:: formatTrack() {
     p_gap = bytesEntrada[4];
     BYTE p_fillByte = bytesEntrada[5];
     // se supone que formatea la pista despues del seek o recalibrate
-    debug_fdc("FDC:: HD_dr=%d HD_hd=%d SZ=%d NM=%d GP=%02X FB=%02X\n", p_unidad, p_cabezal,
-                p_tamSector, p_ultSectorPista, p_gap, p_fillByte);
+    debug_fdc("FDC:: HD_dr=%d HD_hd=%d pista=%d SZ=%d sectores=%d GP=%02X FB=%02X\n", 
+            p_unidad, p_cabezal, p_pista,
+            p_tamSector, p_ultSectorPista, p_gap, p_fillByte);
+    activeDsk = disk[p_unidad];
 
-    if (pista_formateo == 255) pista_formateo = 0;
-    u32 tamPista = (p_tamSector << 8) * p_ultSectorPista * activeDsk->getSides() + TRACK_HEADER_LEN;
-
-    debug_fdc("FDC:: formatTrack() pista=%d tamPista=%ld\n", p_pista, tamPista);
-    //if (tamPista > activeDsk->getTrackSize()) {
-    //    // rehacer disco
-    //}
-    fase = FASE_RESULTADO;
-
-    contadorReady = (p_tamSector << 8) * p_ultSectorPista * activeDsk->getSides();
-
-    dio = FDC_A_CPU;
     regEstado0 = p_unidad;
-    if (p_cabezal) regEstado0 |= R0_HD_HEAD_ADDRESS;
-
     regEstado1 = 0;
     regEstado2 = 0;
-    setOutputBytes_RS012_CHRN(pista_formateo, p_cabezal, p_sector, p_tamSector);
-    pista_formateo++;
-    if (pista_formateo == p_ultSectorPista) pista_formateo = 255;
+
+    if (activeDsk != nullptr) {
+        if (p_cabezal) regEstado0 |= R0_HD_HEAD_ADDRESS; // el cabezal seleccionado o el que habia?
+        if (activeDsk->getSides() == 1 && p_cabezal == 1) regEstado0 |= R0_NR_NOT_READY;
+        if (p_pista > activeDsk->getTracks()) regEstado0 |= R0_IC_COMANDO_INVALIDO;
+        if (activeDsk->isProtected()) regEstado1 |= R1_NW_NOT_WRITEABLE;
+        
+        /*if (activeDsk->getTrackSize() < tamPista  ||  !activeDsk->existsTrackInFile(activeTrack[p_unidad], p_cabezal)) {
+            // el tamanio de la pista existente es menor que el que queremos formar, con lo que hay que recolocar datos en disco
+            // se podrian crear discos de tamanio irreal al igual que en winape
+            activeDsk->reconstruir(p_pista, tamPista);
+        }
+        else debug_fdc("FDC:: no reconstruir\n");
+        */
+    }
+
+    formatData = new FormatData(activeTrack[p_unidad], p_cabezal, p_ultSectorPista /*num_sectores*/, 
+        p_tamSector, p_gap, p_fillByte);
+
+    fase = FASE_EJECUCION;
+    //dio = CPU_A_FDC;
+    f_fdcBusy = true;
+    
+    setOutputBytes_RS012_CHRN(activeTrack[p_unidad], p_cabezal, p_sector, p_tamSector);
 }
+
+void FDC:: formatTrack_execution(BYTE dato) {
+    //debug_fdc("FDC:: formatTrack_execution %02X\n", dato);
+    formatData->addByte(dato);
+    if (formatData->isFull()) {
+        debug_fdc("FDC:: formatTrack_execution formatData lleno\n");
+        formatData->print();
+        if (activeDsk != nullptr) activeDsk->formatTrack(formatData);
+        delete formatData;
+        //
+        fase = FASE_RESULTADO;
+        dio = FDC_A_CPU; // los siguientes datos seran la transferencia del resultado
+    }
+}
+
 
 // comando 0F - no hay bytes de salida
 void FDC:: seek() {
@@ -679,50 +721,59 @@ void FDC:: seek() {
     //if (activeDsk == nullptr || activeDsk->getTracks() == 0 || !motorOn); // 0x48
     if (activeDsk != nullptr  &&  p_pista > activeDsk->getTracks()) 
         activeTrack[p_unidad] = p_pista = activeDsk->getTracks()-1;
-}   
+}
 
-
+// TODO contemplar errores
 void FDC:: scanEqual() {
     debug_fdc("FDC:: ---------- scanEqual()\n");
+    getDriveHead();
     getParams_CHRN_EOT_GPL_DTL();
     debug_fdc("FDC:: unidad=%d cabezal=%d pista=%d\n", p_unidad, p_cabezal, p_pista);
 
     T_SectorInfo sectorInfo;
     bool encontrado = activeDsk->getSectorInfo_ID(p_pista, p_cabezal, p_sector, &sectorInfo);
+    debug_fdc("FDC:: encontrado = %d\n", encontrado);
 
     if (encontrado) {
-        regEstado0 = 0;
+        regEstado0 = p_unidad;
+        if (p_cabezal) regEstado0 |= R0_HD_HEAD_ADDRESS;
+
         regEstado1 = 0;
         regEstado2 = R2_SH_SCAN_EQUAL_HIT;
+
+        contador = 0;
+        maxContador = sectorInfo.sectorSize << 8;
+        fase = FASE_EJECUCION;
+        dio = CPU_A_FDC;
     }
     else {
         regEstado0 = R0_IC_COMANDO_INTERRUMPIDO;
         regEstado1 = R1_ND_NO_DATA;
         regEstado2 = R2_DD_DATA_ERROT_IN_DATA;
         fase = FASE_RESULTADO;
+        dio = FDC_A_CPU;
     }
     
-    dio = CPU_A_FDC;
-
     setOutputBytes_RS012_CHRN(p_pista, p_cabezal, p_sector, p_tamSector);
 }
 
+
+void FDC:: scan_execution(BYTE dato) {
+    contador++;
+    if (contador == maxContador) {
+        fase = FASE_RESULTADO;
+        dio = FDC_A_CPU;
+    }
+}
 
 void FDC:: scanSlowOrEqual() {
     debug_fdc("FDC:: ---------- scanSlowOrEqual()\n");
-    getParams_CHRN_EOT_GPL_DTL();
-    dio = CPU_A_FDC;
-
-    setOutputBytes_RS012_CHRN(p_pista, p_cabezal, p_sector, p_tamSector);
+    scanEqual();
 }
-
 
 void FDC:: scanHighOrEqual() {
     debug_fdc("FDC:: ---------- scanHighOrEqual()\n");
-    getParams_CHRN_EOT_GPL_DTL();
-    dio = CPU_A_FDC;
-
-    setOutputBytes_RS012_CHRN(p_pista, p_cabezal, p_sector, p_tamSector);
+    scanEqual();
 }
 
 
@@ -743,3 +794,4 @@ DSK* FDC:: getDisk(u8 drive) {
     else
         return nullptr;
 }
+

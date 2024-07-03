@@ -24,6 +24,7 @@
 
 #include "tipos.h"
 #include "dsk.h"
+#include "log.h"
 
 
 char EXTENDED_HEADER[34] = {'E','X','T','E','N','D','E','D',' ','C','P','C',' ','D','S','K',' ','F','i','l','e','\r','\n','D','i','s','k','-','I','n','f','o','\r','\n'};
@@ -44,9 +45,9 @@ T_DskHeader:: T_DskHeader(u8 _tracks, u8 _sides) {
     sides = _sides;
 }
 
-void T_DskHeader:: calcTrackSize(u8 sectors, u16 sectorSize) { 
+/*void T_DskHeader:: calcTrackSize(u8 sectors, u16 sectorSize) { 
     trackSize = sides * sectors * sectorSize + TRACK_HEADER_LEN; 
-}
+}*/
 
 u16 T_DskHeader:: getTrackSize() {
     return trackSize;
@@ -79,6 +80,10 @@ void T_DskHeader:: load(std::fstream& f) {
     f.read(reinterpret_cast<char*>(this), sizeof(*this));
 }
 
+
+void T_DskHeader:: print() {
+    debug_dsk("DSK:: dsk-header  tracks=%d sides=%d\n", tracks, sides);
+}
 
 //---------------------------------------------------------------------
 
@@ -113,6 +118,10 @@ void T_DskTrackInfo:: load(std::fstream& f) {
 }
 
 
+void T_DskTrackInfo:: print() {
+    debug_dsk("DSK:: track-header  track=%d side=%d sectors=%d\n", track, side, sectors);
+}
+
 //--------------------------------------------------------------------
 
 
@@ -123,6 +132,7 @@ T_SectorInfo:: T_SectorInfo(u8 _track, u8 _side, u8 _sectorId, u8 _sectorSize) {
     side = _side;
     sectorId = _sectorId;
     sectorSize = _sectorSize;
+    actualDataLen = 0x0080 << _sectorSize;
 }
 T_SectorInfo:: T_SectorInfo(u8 _track, u8 _side, u8 _sectorId, u8 _sectorSize, u16 _actualDataLen) {
     T_SectorInfo(_track, _side, _sectorId, _sectorSize);
@@ -136,3 +146,7 @@ void T_SectorInfo:: load(std::fstream& f) {
     f.read(reinterpret_cast<char*>(this), sizeof(*this));
 }
 
+
+void T_SectorInfo:: print() {
+    debug_dsk("DSK:: sector-info  track=%d side=%d sectorID=%02X size1=%02X size2=%04X\n", track, side, sectorId, sectorSize, actualDataLen);
+}

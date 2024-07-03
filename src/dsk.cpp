@@ -1,7 +1,7 @@
 /*___________________________________________________________________________
 |                                                                            |
 |  GEMUX-CPC - Amstrad CPC emulator                                          |
-|  DSK file implementation                                                   |
+|  DSK (standard and extended) file implementation                           |
 |                                                                            |
 |  Copyright (c) 2024 Gallegux (gallegux@gmail.com)                          |
 |                                                                            |
@@ -40,6 +40,27 @@ void rellenar(std::fstream& f, u16 veces, u8 b) {
 }
 
 
+void limpiarBuffer(BYTE* ptrBuffer, u16 cont) {
+	while (cont) {
+		*ptrBuffer = 0;
+		ptrBuffer++;
+		cont--;
+	}
+}
+
+
+void copiarBytes(std::fstream& fin, std::fstream& fout, u16 contBytes) {
+	BYTE b;
+
+	while (contBytes--) {
+		fin.read(reinterpret_cast<char*>(&b), 1);
+		fout.write(reinterpret_cast<char*>(&b), 1);
+	}
+}
+
+
+
+
 DSK:: DSK() {}
 
 DSK:: ~DSK() {
@@ -53,9 +74,12 @@ DSK:: ~DSK() {
 	delete tablaPosicionesPistas;
 }
 
-bool DSK:: isFormatted() { return dskHeader.tracks > 0; }
-u8 DSK:: getTracks() { return dskHeader.tracks; }
-u8 DSK:: getSides()  { return dskHeader.sides; }
+
+u32  DSK:: getTamFichero()	{ return tamFichero; }
+u16  DSK:: getTrackSideSize_standard() 	{ return dskHeader.getTrackSize(); }
+bool DSK:: isFormatted() 	{ return dskHeader.tracks > 0; }
+u8   DSK:: getTracks() 		{ return dskHeader.tracks; }
+u8   DSK:: getSides()  		{ return dskHeader.sides; }
 
 // devuelve si el disco esta protegido contra estcritura
 bool DSK:: isProtected() { return protegido; }
@@ -66,26 +90,96 @@ bool DSK:: flipProtected() { return (protegido = !protegido); }
 void DSK:: setProtected(bool p) { protegido = p; }
 
 
-u32 DSK:: getTrackPos(u8 track) {
+// devuelve la suma del tamanio de los sectores
+u16 DSK:: getTrackSideSize_extended() {
+	T_DskTrackInfo trackInfo;
+	trackInfo.load(fichero);
+	u16 size = 0;
+	T_SectorInfo sectorInfo;
+
+	for (u8 s = 0; s < trackInfo.sectors; s++) {
+		sectorInfo.load(fichero);
+		//sectorInfo.print();
+		size += sectorInfo.actualDataLen;
+	}
+	return size + TRACK_HEADER_LEN;
+}
+
+
+i32 DSK:: getTrackPos(u8 track, u8 side) {
 	if (extended) {
 		// este formato no almacena el tamanio de la pista
 		// pero tiene una tabla con las posiciones de cada par pista-cara
-		return tablaPosicionesPistas[track][0]; 
+		return tablaPosicionesPistas[track][side]; 
 	}
 	else { // standard
 		// este formato no tiene tabla, pero guarda el tamanio de cada pista y con eso calculamos la posicion de cada pista
-		return track * dskHeader.trackSize + DSK_HEADER_LEN;
+		i32 pos = track * dskHeader.sides * dskHeader.trackSize + DSK_HEADER_LEN;
+		if (side) pos += dskHeader.trackSize;
+		return pos;
 	}
 }
 
 
+i32 DSK:: goTrackSide(u8 track, u8 side) {
+	i32 fp = getTrackPos(track, side);
+	debug_dsk("DSK:: track,side pos  %04lX\n", fp);
+	fichero.seekg(fp, std::ios::beg);
+	fichero.seekp(fp, std::ios::beg);
+	return fp;
+}
+
+
+
+void DSK:: createTrackSide(std::fstream& dskFile, u8 pista, u8 cara, u8 sectores, u8 sectorSize, 
+	BYTE fillerByte, BYTE gap, BYTE primerSectorId)
+{
+	T_DskTrackInfo trackInfo {pista, cara, sectores, sectorSize};
+	trackInfo.write(dskFile); // grabar cabecera
+	u16 contBytes = sizeof(trackInfo); // contador de bytes usados en dskTrackInfo
+
+	// info sectores de la pista
+	for (u8 sector = 0; sector < sectores; sector++) {
+		//debug_dsk("writin sector info %d\n", sector);
+		T_SectorInfo sectorInfo {pista, cara, (u8) (primerSectorId+sector), sectorSize};
+
+		contBytes += sizeof(sectorInfo);
+		sectorInfo.write(dskFile);
+	}
+	// rellenamos hasta alcanzar el tamanio del track_header (#100)
+	//debug_dsk("ini relleno 2  %d  %d\n", contBytes, TRACK_HEADER_LEN-contBytes);
+	rellenar(dskFile, TRACK_HEADER_LEN-contBytes, 0);
+	//debug_dsk("fin relleno 2\n");
+
+	// escribir los sectores vacios
+	for (u8 sector = 0; sector < sectores; sector++) {
+		//debug_dsk("writing empty sector... %d  %d\n", sector, sectorSize);
+		//rellenar(dskFile, sectorSize << 8, fillerByte);
+		rellenar(dskFile, 0x80 << sectorSize /*<< 8*/, fillerByte);
+		// en winape, cuando se formatea un sector con sectorSize=4 el tamanio es 8192bytes
+	}
+}
+
+
+void DSK:: createTrack(std::fstream& dskFile, u8 pista, u8 caras, u8 sectores, u8 sectorSize, 
+	BYTE fillerByte, BYTE gap, BYTE primerSectorId)
+{
+	for (u8 cara = 0; cara < caras; cara++) {
+		createTrackSide(dskFile, pista, cara, sectores, sectorSize, fillerByte, gap, primerSectorId);
+	}
+}
+
+
+
 // crea un fichero dsk
 void DSK:: create(std::string& fichero, u8 pistas, u8 caras, u8 sectores, u8 sectorSize, 
-		BYTE fillerByte, BYTE gap, BYTE primerSectorId) {
+		BYTE fillerByte, BYTE gap, BYTE primerSectorId)
+{
 	std::fstream dskFile(fichero, std::ios::out | std::ios::binary);
 
 	T_DskHeader dskHeader {pistas, caras};
-	dskHeader.calcTrackSize(sectores, sectorSize);
+	dskHeader.trackSize = sectores * (sectorSize << 8);
+	//dskHeader.calcTrackSize(sectores, sectorSize);
 	dskHeader.write(dskFile);
 	
 	u16 contBytes = sizeof(dskHeader) + pistas*caras; // num bytes para rellenar
@@ -96,33 +190,7 @@ void DSK:: create(std::string& fichero, u8 pistas, u8 caras, u8 sectores, u8 sec
 
 	// pistas
 	for (u8 pista = 0; pista < pistas; pista++) {
-		for (u8 cara = 0; cara < caras; cara++) {
-			T_DskTrackInfo trackInfo {pista, cara, sectores, sectorSize};
-
-			trackInfo.write(dskFile); // grabar cabecera
-
-			contBytes = sizeof(trackInfo); // contador de bytes usados en dskTrackInfo
-
-			// info sectores de la pista
-			for (u8 sector = 0; sector < sectores; sector++) {
-				//debug_dsk("writin sector info %d\n", sector);
-				T_SectorInfo sectorInfo {pista, cara, (u8) (primerSectorId+sector), sectorSize};
-
-				contBytes += sizeof(sectorInfo);
-				sectorInfo.write(dskFile);
-			}
-
-			// rellenamos hasta #100
-			//debug_dsk("ini relleno 2  %d  %d\n", contBytes, TRACK_HEADER_LEN-contBytes);
-			rellenar(dskFile, TRACK_HEADER_LEN-contBytes, 0);
-			//debug_dsk("fin relleno 2\n");
-
-			// escribir los sectores vacios
-			for (u8 sector = 0; sector < sectores; sector++) {
-				//debug_dsk("writing empty sector... %d  %d\n", sector, sectorSize);
-				rellenar(dskFile, sectorSize, fillerByte);
-			}
-		}
+		createTrack(dskFile, pista, caras, sectores, sectorSize, fillerByte, gap, primerSectorId);
 	}
 	dskFile.close();
 }
@@ -130,16 +198,55 @@ void DSK:: create(std::string& fichero, u8 pistas, u8 caras, u8 sectores, u8 sec
 
 // solo se utiliza para los extended
 void DSK:: crearTabla(u8 pistas, u8 caras) {
-	tablaPosicionesPistas = new u32*[pistas];
+	tablaPosicionesPistas = new i32*[pistas];
 
 	for (u8 p = 0; p < pistas; p++) {
-		tablaPosicionesPistas[p] = new u32[caras];
+		tablaPosicionesPistas[p] = new i32[caras];
+	}
+}
+
+
+
+void DSK:: open_standard(std::string& f) {
+	debug_dsk("DSK:: open() fichero=%s tam=%ld tracks=%d sides=%d trackSize=%04X extended=%d\n", 
+		f.c_str(), tamFichero, dskHeader.tracks, dskHeader.sides, dskHeader.trackSize, extended);
+	u32 pos = DSK_HEADER_LEN;
+	for (u8 pista = 0; pista < dskHeader.tracks; pista++) {
+		debug_dsk("DSK::  open() pista %d -> %05lX\n", pista, pos);
+		pos += dskHeader.trackSize;
+	}
+	debug_dsk("DSK:: track_size = %04X\n", dskHeader.trackSize);
+}
+
+
+void DSK:: open_extended(std::string& f) {
+	debug_dsk("DSK:: open() fichero=%s tam=%ld tracks=%d sides=%d extended=%d\n", 
+		f.c_str(), tamFichero, dskHeader.tracks, dskHeader.sides, extended);
+	crearTabla(dskHeader.tracks, dskHeader.sides) ;
+
+	u32 pos = DSK_HEADER_LEN;
+	u32 trackSize = 0;
+	char b; // para leer bytes
+
+	for (u8 pista = 0; pista < dskHeader.tracks; pista++) {
+		for (u8 cara = 0; cara < dskHeader.sides; cara++) {
+			fichero.read(&b, 1);
+			trackSize = b << 8;
+			if (dskHeader.trackSize == 0 && trackSize != 0)
+				dskHeader.trackSize = trackSize;
+			//debug_dsk("DSK::  %d %d\n", b, trackSize);
+			//trackSize = trackSize << 8;
+			tablaPosicionesPistas[pista][cara] = (pos != 0) ? pos : -1;
+			debug_dsk("DSK::  pista,cara %d,%d -> %05lX\n", pista, cara, pos);
+			if (trackSize != 0) pos += trackSize;
+		}
 	}
 }
 
 
 bool DSK:: open(std::string& f) {
 	fichero = std::fstream(f, std::ios::in | std::ios::out | std::ios::binary | std::ios::ate);
+	nombreFichero = f;
 	// ate nos situal al final
     
     tamFichero = fichero.tellg(); // Obtener la posicion, que corresponde al tamanio del fichero
@@ -148,36 +255,9 @@ bool DSK:: open(std::string& f) {
 	dskHeader.load(fichero);
 	extended = dskHeader.isExtended();
 
-	if (extended) {
-		debug_dsk("DSK:: open() fichero=%s tam=%ld tracks=%d sides=%d extended=%d\n", 
-			f.c_str(), tamFichero, dskHeader.tracks, dskHeader.sides, extended);
-		crearTabla(dskHeader.tracks, dskHeader.sides) ;
-
-		u32 pos = DSK_HEADER_LEN;
-		u32 trackSize = 0;
-		char b; // para leer bytes
-
-		for (u8 pista = 0; pista < dskHeader.tracks; pista++) {
-			for (u8 cara = 0; cara < dskHeader.sides; cara++) {
-				fichero.read(&b, 1);
-				trackSize = b << 8;
-				//debug_dsk("DSK::  %d %d\n", b, trackSize);
-				//trackSize = trackSize << 8;
-				tablaPosicionesPistas[pista][cara] = pos;
-				debug_dsk("DSK::  pista,cara %d,%d -> %05lX\n", pista, cara, pos);
-				pos += trackSize;
-			}
-		}
-	}
-	else {
-		debug_dsk("DSK:: open() fichero=%s tam=%ld tracks=%d sides=%d trackSize=%04X extended=%d\n", 
-			f.c_str(), tamFichero, dskHeader.tracks, dskHeader.sides, dskHeader.trackSize, extended);
-		u32 pos = DSK_HEADER_LEN;
-		for (u8 pista = 0; pista < dskHeader.tracks; pista++) {
-			debug_dsk("DSK::  open() pista %d -> %05lX\n", pista, pos);
-			pos += dskHeader.trackSize;
-		}
-	}
+	if (extended)	open_extended(f);
+	else 			open_standard(f);
+	
 	return true;
 }
 
@@ -186,7 +266,7 @@ void DSK:: close() {
 	if (fichero) fichero.close();
 }
 
-
+//---------------------------------------------------------------------------------------------------------
 
 void DSK:: saveAs(std::string& f) {
 	std::fstream ficheroNuevo = std::fstream(f, std::ios::in | std::ios::out | std::ios::binary);
@@ -198,103 +278,154 @@ void DSK:: saveAs(std::string& f) {
 			tamFicheroOrigen += tablaPosicionesPistas[pista][cara];
 		}
 	}
-
+	#define TAM_BUFFER 512
 	fichero.seekg(0, std::ios::beg);
-	u32 numBloques = tamFicheroOrigen >> 7;  // bloques 512
-	unsigned char buffer[512];
+	u32 numBloques = tamFicheroOrigen >> 7;  // bloques TAM_BUFFER
+	unsigned char buffer[TAM_BUFFER];
 
 	for (u32 bloque = 0; bloque < numBloques; bloque++) {
-		fichero.read(reinterpret_cast<char*>(&buffer), sizeof(512));
-		ficheroNuevo.write(reinterpret_cast<char*>(buffer), 512);
+		fichero.read(reinterpret_cast<char*>(&buffer), TAM_BUFFER);
+		ficheroNuevo.write(reinterpret_cast<char*>(buffer), TAM_BUFFER);
 	}
 	fichero.close();
 	fichero = std::move(ficheroNuevo); // el fichero de trabajo es el creado
+	nombreFichero = f;
+	#undef TAM_BUFFER
 }
 
 
-// todos los sectores de la pista tienen el mismo tamanio
-// devuelve el NUMERO de sector de la pista, o -1 si no se ha encontrado
-i8 getNumSector(u8 numSectors, u8 sector, u16 sectorSize, std::fstream& fichero, T_SectorInfo* sectorInfo) {
-	u8 contador = 0;
-	for (u8 ns = 0; ns < numSectors; ns++) {
-		sectorInfo->load(fichero);
-		//fichero->read(reinterpret_cast<char*>(&sectorInfo), sizeof(T_SectorInfo));
-		if (sectorInfo->sectorId == sector) {
-			// comprobacion
-			debug_dsk("DSK:: getNumSector() track=%d sector=%02X\n", sectorInfo->track, sectorInfo->sectorId);
-			return contador;
-		}
-		contador++;
-	}
-	return -1;
-}
 
 // obtiene el track info
 // deja PL en la posicion del 'Sector Information List'
 void DSK:: getTrackInfo(u8 track, u8 side, T_DskTrackInfo* trackInfo) {
-	u32 pos = getTrackPos(track); // tablaPosicionesPistas[track][side];
-	//debug_dsk("DSK:: getTrackInfo() pos_track=%05lX\n", pos);
-	fichero.seekg(pos, std::ios::beg);
-	fichero.read(reinterpret_cast<char*>(trackInfo), sizeof(*trackInfo));
-	//debug_dsk("DSK:: block_info=%s track=%d side=%d sec_size=%02X sectors=%02X filler=%02X gap=%02X\n", 
-	//	trackInfo->blockInfo, trackInfo->track, trackInfo->side, trackInfo->sectorSize, trackInfo->sectors,
-	//	trackInfo->filler, trackInfo->gap);
+	//u32 pos = getTrackPos(track, side); // tablaPosicionesPistas[track][side];
+	goTrackSide(track, side);
+	//fichero.seekg(pos, std::ios::beg);
+	trackInfo->load(fichero);
 }
 
-// obtiene el sector con el Nº indicado
-// esta funcion se invoca cuando no se conoce el formato del disco
-// cuando se conoce el formato se invoca a getSectorInfo_ID
-// PL queda en el inicio de los datos del sector
-void DSK:: getSectorInfo_N(u8 track, u8 side, u8 numSector /*num_sector*/, T_SectorInfo* sectorInfo) {
-	debug_fdc("FDC:: getSector_N   track=%d side=%d sector=%02X\n", track, side, numSector);
-	u32 pos = getTrackPos(track) + sizeof(T_DskTrackInfo) + numSector * sizeof(sectorInfo);
-		//tablaPosicionesPistas[track][side] + sizeof(T_DskTrackInfo) + sector * sizeof(sectorInfo);
-	debug_dsk("DSK:: getSectorInfo_N() pos_sector=%05lX\n", pos);
-	fichero.seekg(pos, std::ios::beg);
-	fichero.read(reinterpret_cast<char*>(sectorInfo), sizeof(sectorInfo));
-	debug_fdc("DSK:: track=%d side=%d sector=%d -> sectorId=%02X, sectorSize=%d\n",
-		track, side, numSector, sectorInfo->sectorId, sectorInfo->sectorSize);
-	// dejamos el puntero en los datos del sector
+
+
+// la finalidad de este metodo es obtener el sectorId
+// se invoca a traves de la funcion readId
+void DSK:: getSectorInfo_N(u8 track, u8 side, u8 numSector, T_SectorInfo* sectorInfo) {
+	debug_fdc("FDC:: getSectorInfo_N   track=%d side=%d sector=%02X\n", track, side, numSector);
+
+	T_DskTrackInfo trackInfo;
+	u8 sector = 0;
+	getTrackInfo(track, side, &trackInfo);
+
+	if (numSector < trackInfo.sectors) numSector = trackInfo.sectors-1;
+
+	do {
+		sectorInfo->load(fichero);
+	} while (++sector < numSector);
 }
+
+//------------------------------------------------------------------------------------------
+
 
 // obtiene el sector con el ID indicado
 // devuelve true si lo encuentra, false en el caso contrario
 // deja PL y PE al inicio de los datos del sector
-bool DSK:: getSectorInfo_ID(u8 track, u8 side, u8 sectorId, T_SectorInfo* sectorInfo) {
+bool DSK:: getSectorInfo_ID_extended(u8 track, u8 side, u8 sectorId, T_SectorInfo* sectorInfo) {
+	debug_dsk("DSK:: getSectorInfo_ID_extended()   track=%d side=%d sectorId=%02X\n", track, side, sectorId);
+
 	u32 posSectorInfo, posSectorData;
 	u16 sectorSize = 0;
-	posSectorInfo = posSectorData = getTrackPos(track);
-	posSectorInfo += sizeof(T_DskTrackInfo);
-	posSectorData += 0x100; // apuntando al primer sector
+	posSectorInfo = posSectorData = getTrackPos(track, side);
+	debug_dsk("DSK:: pos_pista = %05lX\n", posSectorInfo);
 
-	//debug_fdc("DSK:: getSector_ID()   track=%d side=%d sector=%02X pos_info=%06X\n", track, side, sectorId, posSectorInfo);
-	fichero.seekg(posSectorInfo, std::ios::beg);
+	fichero.seekg(posSectorInfo, std::ios::beg);  // posSectorInfo ahora tiene la pos de la pista
+	T_DskTrackInfo trackInfo;
+	trackInfo.load(fichero);
 	
-	for (u8 ns = 0; ns < MAX_SECTORS; ns++) {
-		fichero.read(reinterpret_cast<char*>(sectorInfo), sizeof(sectorInfo));
-		sectorSize = sectorInfo->sectorSize;
-		sectorSize = sectorSize << 8;
-		//debug_dsk("DSK:: getSector_ID()   sector_bucle=%02X\n", sectorInfo->sectorId);
-		if (sectorInfo->sectorId == sectorId && sectorInfo->track == track && sectorInfo->side == side) {
-			//debug_fdc("FDC:: getSector_ID()   sector_size=%d sector_pos=%05lX\n", sectorSize, posSectorData);
-				//p = tablaPosicionesPistas[track][side] + 256 + sectorSize * ns;
-				//debug_dsk("DSK:: getSector_ID()   sector encontrado  n=%d  sector_pos=%06lX\n", ns, p);
-				//fichero.seekg(p, std::ios::beg);
+	posSectorInfo += sizeof(T_DskTrackInfo); // ahora apunta al primer sector
+	posSectorData += TRACK_HEADER_LEN; // apuntando a los datos del primer sector
+
+	//debug_fdc("DSK:: getSectorInfo_ID_extended()   sectores=%d\n", trackInfo.sectors); 
+	
+	for (u8 ns = 0; ns < trackInfo.sectors; ns++) {
+		sectorInfo->load(fichero);
+		//debug_dsk("DSK:: sectorId=%02X  sectorSize=%02X\n", sectorInfo->sectorId, sectorInfo->sectorSize); FLUSH
+		sectorSize = 0x0080 << sectorInfo->sectorSize;
+		//debug_dsk("DSK:: getSectorInfo_ID_extended()  bucle   sectorId=%02X  sectorSize=%02X  sectorPos=%05lX\n", 
+		//			sectorInfo->sectorId, sectorInfo->sectorSize, posSectorData);
+
+		if (sectorInfo->sectorId == sectorId  &&  sectorInfo->track == track  &&  sectorInfo->side == side) {
+				// posiblemente las dos ultimas comparaciones sean redundantes
 			fichero.seekg(posSectorData, std::ios::beg);  // dejamos PL en los datos
 			fichero.seekp(posSectorData, std::ios::beg);  // dejamos PE en los datos
 			//debug_fdc("FDC:: getSector_ID()   sector_data_pos=%05lX\n", posSectorData);
-			return true; // numero secuencial del sector
+			return true; 
 		}
 		posSectorData += sectorSize;
 	}
 	return false;
 }
 
-bool DSK:: existsTrack(u8 track, u8 side) {
+
+// obtiene el sector con el ID indicado
+// devuelve true si lo encuentra, false en el caso contrario
+// deja PL y PE al inicio de los datos del sector
+bool DSK:: getSectorInfo_ID_standard(u8 track, u8 side, u8 sectorId, T_SectorInfo* sectorInfo) {
+	debug_dsk("DSK:: getSectorInfo_ID_standard()   track=%d side=%d sectorId=%02X\n", track, side, sectorId);
+
+	u32 posSectorInfo, posSectorData;
+	posSectorInfo = posSectorData = getTrackPos(track, side);
+	debug_dsk("DSK:: pos_pista = %05lX\n", posSectorInfo);
+
+	fichero.seekg(posSectorInfo, std::ios::beg);  // posSectorInfo ahora tiene la pos de la pista
+	T_DskTrackInfo trackInfo;
+	trackInfo.load(fichero);
+	u16 sectorSize = 0x0080 << trackInfo.sectorSize;
+	
+	posSectorInfo += sizeof(T_DskTrackInfo); // ahora apunta al primer sector
+	posSectorData += TRACK_HEADER_LEN; // apuntando a los datos del primer sector
+
+	//debug_fdc("DSK:: getSectorInfo_ID_extended()   sectores=%d\n", trackInfo.sectors); 
+	
+	for (u8 ns = 0; ns < trackInfo.sectors; ns++) {
+		//fichero.read(reinterpret_cast<char*>(sectorInfo), sizeof(sectorInfo));
+		sectorInfo->load(fichero);
+		debug_dsk("DSK:: sectorId=%02X  sectorSize=%02X\n", sectorInfo->sectorId, sectorInfo->sectorSize); FLUSH
+		debug_dsk("DSK:: getSectorInfo_ID_standard()  bucle   sectorId=%02X  sectorSize=%02X  sectorPos=%05lX\n", 
+					sectorInfo->sectorId, sectorInfo->sectorSize, posSectorData);
+
+		if (sectorInfo->sectorId == sectorId  &&  sectorInfo->track == track  &&  sectorInfo->side == side) {
+				// posiblemente las dos ultimas comparaciones sean redundantes
+			fichero.seekg(posSectorData, std::ios::beg);  // dejamos PL en los datos
+			fichero.seekp(posSectorData, std::ios::beg);  // dejamos PE en los datos
+			//debug_fdc("FDC:: getSector_ID()   sector_data_pos=%05lX\n", posSectorData);
+			return true; 
+		}
+		posSectorData += sectorSize;
+	}
+	return false;
+}
+
+
+// obtiene el sector con el ID indicado
+// devuelve true si lo encuentra, false en el caso contrario
+// deja PL y PE al inicio de los datos del sector
+bool DSK:: getSectorInfo_ID(u8 track, u8 side, u8 sectorId, T_SectorInfo* sectorInfo) {
+	return (extended) ? getSectorInfo_ID_extended(track, side, sectorId, sectorInfo)
+					  : getSectorInfo_ID_standard(track, side, sectorId, sectorInfo);
+}
+
+
+//--------------------------------------------------------------------------------------
+
+
+bool DSK:: existsTrack(u8 track) {
 	return track < dskHeader.tracks;
 }
 
-// ?? numero de sector o sector id
+bool DSK:: existsTrackSide(u8 track, u8 side) {
+	return  track < dskHeader.tracks  &&  tablaPosicionesPistas[track][side] != -1;
+}
+
+// ?? numero de sector o sector id, solo usada por readTrack, REHACER
 bool DSK:: existsSector(u8 track, u8 side, u8 sector) {
 	if (track > dskHeader.tracks) return false;
 	if (side > dskHeader.sides) return false;
@@ -311,33 +442,251 @@ void DSK:: writeSectorData(u16 sectorSize, BYTE* buffer) {
 }
 
 
-// TODO
-void DSK:: formatTrack(u8 track, u8 side, u8 sectors, u8 sectorSize, u8 firstSectorId, BYTE fillerByte) {
-	if (protegido) return;
-
-	u32 pos = tablaPosicionesPistas[track][side];
-	fichero.seekg(pos, std::ios::beg);
-
-	T_DskTrackInfo trackInfo {track, side, sectors, sectorSize};
-
-	for (u8 s = 0; s < sectors; s++) {
-		T_SectorInfo sectorInfo;
-	}
-	/*
-	fichero.read(reinterpret_cast<char*>(&trackInfo), sizeof(T_DskTrackInfo));
-	debug_dsk("DSK:: pistas=%d,%d sides=%d,%d\n", track, side, trackInfo.track, trackInfo.side);
-
-	i8 numSector = getNumSector(trackInfo.sectors, sector, trackInfo.sectorSize, &fichero);
-	if (numSector == -1) return -3;
-	pos += TRACK_HEADER_MIN_LEN + trackInfo.sectorSize * numSector;
-	fichero.seekp(pos, std::ios::beg);
-	fichero.write(reinterpret_cast<char*>(buffer), trackInfo.sectorSize);
-*/
-
-
-	//return 1;
+void DSK:: readByte(BYTE *dato) {
+	fichero.read(reinterpret_cast<char*>(dato), 1);
 }
 
+void DSK:: writeByte(BYTE dato) {
+	fichero.write(reinterpret_cast<char*>(dato), 1);
+}
+
+
+//bool DSK:: existsTrackInFile(u8 track, u8 side) {
+//	return tablaPosicionesPistas[track][side] != -1;
+//}
+
+
+//void copiarPista_extended(std::fstream& fin, std::fstream& fout, u16 tamPista) {
+//	copiarBytes(fin, fout, tamPista);
+//}
+
+
+u16 copiarPista_standard(std::fstream& fin, std::fstream& fout) {
+	u32 tamPista = 0;
+	u32 posSector0 = fin.tellg();
+	posSector0 += TRACK_HEADER_LEN;
+	T_DskTrackInfo trackInfo;
+	trackInfo.load(fin);
+	u16 tamDatosSector = (0x0080 << trackInfo.sectorSize);
+
+	// escribir el T_TrackInfo
+	trackInfo.write(fout);
+
+	u32 posSector[trackInfo.sectors];
+	u32 tamSector[trackInfo.sectors];
+	T_SectorInfo sectorInfo;
+	// calcular el nº total de bytes de los sectores, la posicion de cada uno y su tamano
+	for (u8 sector = 0; sector < trackInfo.sectors; sector++) {
+		sectorInfo.load(fin);
+		tamSector[sector] = sectorInfo.actualDataLen = 0x0080 << sectorInfo.sectorSize;
+		sectorInfo.write(fout);
+		posSector[sector] = posSector0 + sector * tamDatosSector;
+		tamPista += sectorInfo.actualDataLen;
+	}
+
+	u32 numBytes = 0x100 - fin.tellg() & 0x00FF;
+	rellenar(fout, numBytes, 0);
+	
+	// copiar los sectores
+	for (u8 sector = 0; sector < trackInfo.sectors; sector++) {
+		fin.seekg(posSector[sector]);
+		copiarBytes(fin, fout, tamSector[sector]);
+	}
+
+	return tamPista;
+}
+
+
+void formatearPista(std::fstream& fout, FormatData* formatData) {
+	T_DskTrackInfo trackInfo;
+	trackInfo.track = formatData->getTrack();
+	trackInfo.side = formatData->getSide();
+	trackInfo.sectors = formatData->getSectors();
+	trackInfo.sectorSize = formatData->getSectorSize();
+	trackInfo.filler = formatData->getFillerByte();
+	trackInfo.gap = formatData->getGap();
+	trackInfo.write(fout);
+	//trackInfo.print();
+
+	T_SectorInfo sectorInfo;
+
+	for (u8 s = 0; s < formatData->getSectors(); s++) {
+		sectorInfo.track = formatData->getTrack(s);
+		sectorInfo.side = formatData->getSide(s);
+		sectorInfo.sectorId = formatData->getSectorId(s);
+		sectorInfo.sectorSize = formatData->getSectorSize(s);
+		sectorInfo.actualDataLen = 0x0080 << formatData->getSectorSize(s);
+		sectorInfo.write(fout);
+		//sectorInfo.print();
+	}
+	rellenar(fout, TRACK_HEADER_LEN - sizeof(T_DskTrackInfo) - sizeof(T_SectorInfo) * formatData->getSectors(), 0);
+	rellenar(fout, formatData->getTrackSize() - TRACK_HEADER_LEN, formatData->getFillerByte());
+}
+
+
+// reconstruye un disco standard
+void DSK:: rebuild_standard(FormatData* formatData)
+{
+	debug_dsk("DSK:: rebuild_standard\n");
+
+	close();
+	std::string ficheroBak = nombreFichero + ".bak";
+	std::rename(ficheroBak.c_str(), nombreFichero.c_str());
+
+	DSK dskViejo;
+	dskViejo.open(ficheroBak);
+	std::fstream fout {nombreFichero, std::ios::out | std::ios::binary};
+
+	// dsk_header
+	T_DskHeader newDskHeader;
+	newDskHeader.tracks = dskViejo.dskHeader.tracks;
+	newDskHeader.sides = dskViejo.dskHeader.sides;
+	newDskHeader.trackSize = 0xFFFF;
+	newDskHeader.write(fout);
+	
+	//tamPistaAnt = dskViejo.dskHeader.getTrackSideSize_standard();
+	rellenar(fout, DSK_HEADER_LEN-sizeof(newDskHeader), 0);	
+
+	u32 tamanios[newDskHeader.tracks][newDskHeader.sides] = {0};
+
+	for (u8 p = 0; p < newDskHeader.tracks; p++) {
+		for (u8 c = 0; c < newDskHeader.sides; c++) {
+			if (p == formatData->getTrack()  &&  c == formatData->getSide()) {
+				formatearPista(fout, formatData);
+			}
+			else {
+				goTrackSide(p, c);
+				tamanios[p][c] = copiarPista_standard(fichero, fout);
+			}
+		}
+	}
+
+	// escribimos el tamanio de cada pista-cara
+	fout.seekg(DSK_HEADER_LEN, std::ios::beg);
+	BYTE tamPista;
+	for (u8 p = 0; p < newDskHeader.tracks; p++) {
+		for (u8 c = 0; c < newDskHeader.sides; c++) {
+			tamPista = (BYTE) (tamanios[p][c] >> 8);
+			fout.write(reinterpret_cast<char*>(&tamPista), 1);
+		}
+	}
+	dskViejo.close();
+	fout.close();
+
+	open_extended(nombreFichero);
+}
+
+
+// reconstruye un disco extended
+void DSK:: rebuild_extended(FormatData* formatData) {
+	debug_dsk("DSK:: reconstruir extended, pista=%d cara=%d tamPista=%04X\n", 
+		formatData->getTrack(), formatData->getSide(), formatData->getTrackSize());
+
+	std::string nombreFicheroTmp = "rebuild.dsk";
+	std::fstream fout {nombreFicheroTmp, std::ios::out | std::ios::binary | std::ios::ate };
+
+	// escribir el header del disco
+	T_DskHeader newDskHeader;
+	newDskHeader.tracks = dskHeader.tracks;
+	newDskHeader.sides = dskHeader.sides;
+	newDskHeader.trackSize = 0;
+	newDskHeader.write(fout);
+
+	newDskHeader.print();
+	
+	// copiar el tamanio de las pistas
+	fichero.seekg(sizeof(T_DskHeader), std::ios::beg);
+	BYTE b;
+	
+	for (u8 p = 0; p < newDskHeader.tracks; p++) {
+		for (u8 c = 0; c < newDskHeader.sides; c++) {
+			if (p == formatData->getTrack()  &&  c == formatData->getSide()) {
+				b = (BYTE) (formatData->getTrackSize() >> 8);
+				fout.write(reinterpret_cast<char*>(&b), 1);
+			}
+			else {
+				fichero.read(reinterpret_cast<char*>(&b), 1);
+				fout.write(reinterpret_cast<char*>(&b), 1);
+				//copiarBytes(fichero, fout, 1);
+			}
+		}
+	}
+	debug_dsk("DSK:: rellenar hasta 0x100  %d\n", DSK_HEADER_LEN - sizeof(T_DskHeader) - newDskHeader.tracks);
+
+	// rellenar con 0s hasta 0x100
+	rellenar(fout, DSK_HEADER_LEN - sizeof(T_DskHeader) - newDskHeader.tracks, 0);	
+	fichero.seekg(DSK_HEADER_LEN, std::ios::beg);
+	
+	// copiar pistas
+	debug_dsk("DSK:: copiar pistas\n");
+
+	for (u8 p = 0; p < newDskHeader.tracks; p++) {
+		for (u8 c = 0; c < newDskHeader.sides; c++) {
+			if (p == formatData->getTrack()  &&  c == formatData->getSide()) {
+				formatearPista(fout, formatData);
+				debug_dsk("DSK:: formatear pista\n");
+			}
+			else {
+				goTrackSide(p, c);
+				u16 tp = getTrackSideSize_extended();
+				goTrackSide(p, c);
+				copiarBytes(fichero, fout, tp);
+			}
+		}
+	}
+
+	// closes
+	debug_dsk("DSK:: closes\n");
+	fout.close();
+	close();
+
+	// renombrar ficheros
+	debug_dsk("DSK:: renombrar ficheros\n");
+	// de momento conservamos el fichero original, luego borrarlo
+	std::string nombreFicheroOrg = nombreFichero + "-orig";
+	std::rename(nombreFichero.c_str(), nombreFicheroOrg.c_str());
+	debug_dsk("DSK:: ren [%s] -> [%s]\n", nombreFichero.c_str(), nombreFicheroOrg.c_str());
+
+	std::rename(nombreFicheroTmp.c_str(), nombreFichero.c_str());
+	debug_dsk("DSK:: ren [%s] -> [%s]\n", nombreFicheroTmp.c_str(), nombreFichero.c_str());
+
+	// abrir el nuevo fichero
+	open(nombreFichero);
+}
+
+
+void DSK:: formatTrack(FormatData* formatData) {
+	debug_dsk("DSK:: formatTrack, exteded=%d track=%d side=%d\n", extended, formatData->getTrack(), formatData->getSide());
+
+	u16 tamPistaActual;
+	
+	if (extended) {
+		goTrackSide(formatData->getTrack(), formatData->getSide());
+		tamPistaActual = getTrackSideSize_extended();
+	}
+	else {
+		tamPistaActual = dskHeader.trackSize;
+	}
+	debug_dsk("DSK:: tam_pista_actual=%04X    extended=%d    tam_pista_nueva = %04X\n", tamPistaActual, extended, formatData->getTrackSize());
+
+	if (tamPistaActual != formatData->getTrackSize()) {
+		debug_dsk("DSK:: reconstruir\n");
+		if (extended) rebuild_extended(formatData);
+		else          rebuild_standard(formatData); 
+		// probar el rebuild_standard!
+		// posiblemente sea mejor pasarlo siempre a extended porque el tamanio de los sectores puede ser diferente
+		// y asi ahorrarse la comprobacion de tamanio de sectores
+	}
+	else {
+		debug_dsk("DSK:: NO reconstruir\n");
+		goTrackSide(formatData->getTrack(), formatData->getSide());
+		formatearPista(fichero, formatData);
+	}
+}
+
+
+
+// --- creacion de discos standard ---
 
 void DSK:: createStandardData(std::string& fichero) {
 	create(fichero, 40, 1, 9, 2, 0xE5, 0x4E, 0xC1);
@@ -348,3 +697,13 @@ void DSK:: createStandardSystem(std::string& fichero) {
 	create(fichero, 40, 1, 9, 2, 0xE5, 0x4E, 0x41);
 }
 
+void DSK:: create35Data(std::string& fichero) {
+	create(fichero, 80, 2, 9, 2, 0xE5, 0x4E, 0xC1);
+}
+
+
+void DSK:: create35System(std::string& fichero) {
+	create(fichero, 80, 2, 9, 2, 0xE5, 0x4E, 0x41);
+}
+
+	

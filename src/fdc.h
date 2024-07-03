@@ -96,6 +96,7 @@
 #define CICLOS_ENTRE_LECTURAS   22
 #define CICLOS_ENTRE_ESCRITURAS 25
 
+
 enum FDC_Fase { LIBRE, FASE_COMANDO, FASE_EJECUCION, FASE_RESULTADO};
 enum FDC_DIO  { CPU_A_FDC, FDC_A_CPU}; // 0=CPU->FDC, 1=FDC->CPU
 
@@ -133,6 +134,7 @@ class FDC : public Dispositivo
     BYTE bytesEntrada[8], bytesSalida[7]; // buffers para el comando y parametros, y resultado
     bool bytesCopiados; // indica si se ha terminado de copiar los bytes
     BYTE *buffer, *finBuffer, *puntBuffer; // buffer, fin del buffer, puntero que se mueve entre buffer(inicio) y finBuffer
+    u16 contador, maxContador;
 
     // parametros de los comandos
     bool mt_multiTrack, mf_mfmMode, sk_skip;
@@ -140,9 +142,10 @@ class FDC : public Dispositivo
     //, p_1_cabezal; se envia el head dos veces, pero parece que el bueno es el que llega en el 2o byte
     u8 p_pista, p_cabezal, p_sector, p_tamSector, p_ultSectorPista, p_gap, p_longDatosSi;
 
-
     typedef void (FDC::*PtrFuncion)();
     PtrFuncion ptrFuncion;
+
+    FormatData* formatData;
 
     void prepareCommandFDC(u8 numBytesEntrada, u8 numBytesSalida, bool led, PtrFuncion funcion);
 
@@ -166,13 +169,16 @@ class FDC : public Dispositivo
     void senseInterruptStaus(); // leer estado interrupciones
     void recalibrate(); // busqueda de la pista 0
     void readData();
-    //void readDeletedData();
+    void readDeletedData();
     void writeData();
-    //void writeDeletedData();
+    void writeData_execution(BYTE dato);
+    void writeDeletedData();
     void readTrack();
     void readId();
     void formatTrack();
+    void formatTrack_execution(BYTE dato);
     void scanEqual();
+    void scan_execution(BYTE dato);
     void scanSlowOrEqual();
     void scanHighOrEqual();
     void invalid();
@@ -186,7 +192,7 @@ public:
     FDC();
     void reset() override;
 
-    static void setTurboMode(bool turbo);
+    void setTurboMode(bool turbo);
     
     bool OUT(WORD puerto, BYTE dato) override;
     bool IN(WORD puerto, BYTE* dato) override;
