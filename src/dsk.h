@@ -140,6 +140,8 @@ public:
 	void write(std::fstream& f);
 	void load(std::fstream& f);
 
+	u16 getSectorDataLength(); // solo para los discos standar
+
 	void print();
 };
 #pragma pack(pop)

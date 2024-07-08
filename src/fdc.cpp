@@ -399,6 +399,12 @@ void FDC:: writeData() {
 
     if (activeDsk == nullptr) { // no hay disco
         debug_fdc("FDC:: writeData() no hay disco\n");
+        regEstado0 = R0_NR_NOT_READY;
+    }
+    else if (activeDsk->isProtected()) {
+        regEstado0 = R0_NR_NOT_READY;
+        if (p_cabezal == 1  &&  activeDsk->getSides() == 1) regEstado0 = R0_NR_NOT_READY;
+        regEstado1 = R1_NW_NOT_WRITEABLE;
     }
     else {
         debug_fdc("FDC:: do write_data\n");
@@ -414,6 +420,10 @@ void FDC:: writeData() {
             f_fdcBusy = true;
             fase = FASE_EJECUCION;
             dio = CPU_A_FDC;
+
+            regEstado0 = R0_IC_COMANDO_INTERRUMPIDO | p_unidad;   
+            if (p_cabezal)  regEstado0 |= R0_HD_HEAD_ADDRESS;
+            regEstado1 = R1_EN_END_OF_TRACK; // puesto tras operacion COPY de CPM
         }
         else {
             debug_fdc("FDC:: writeData() sector no encontrado\n");
@@ -654,10 +664,10 @@ void FDC:: formatTrack() {
     p_gap = bytesEntrada[4];
     BYTE p_fillByte = bytesEntrada[5];
     // se supone que formatea la pista despues del seek o recalibrate
-    debug_fdc("FDC:: HD_dr=%d HD_hd=%d pista=%d SZ=%d sectores=%d GP=%02X FB=%02X\n", 
-            p_unidad, p_cabezal, p_pista,
-            p_tamSector, p_ultSectorPista, p_gap, p_fillByte);
     activeDsk = disk[p_unidad];
+    debug_fdc("FDC:: HD_dr=%d HD_hd=%d pista=%d SZ=%d sectores=%d GP=%02X FB=%02X\n", 
+            p_unidad, p_cabezal, activeTrack[p_unidad],
+            p_tamSector, p_ultSectorPista, p_gap, p_fillByte);
 
     regEstado0 = p_unidad;
     regEstado1 = 0;
@@ -685,7 +695,8 @@ void FDC:: formatTrack() {
     //dio = CPU_A_FDC;
     f_fdcBusy = true;
     
-    setOutputBytes_RS012_CHRN(activeTrack[p_unidad], p_cabezal, p_sector, p_tamSector);
+    setOutputBytes_RS012_CHRN(activeTrack[p_unidad], /*nota*/p_cabezal, p_ultSectorPista/*num.sectores*/, p_tamSector);
+                                                     // nota: en caprice se ve un 4
 }
 
 void FDC:: formatTrack_execution(BYTE dato) {

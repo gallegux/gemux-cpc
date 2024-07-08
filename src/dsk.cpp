@@ -331,16 +331,13 @@ void DSK:: getSectorInfo_N(u8 track, u8 side, u8 numSector, T_SectorInfo* sector
 bool DSK:: getSectorInfo_ID_extended(u8 track, u8 side, u8 sectorId, T_SectorInfo* sectorInfo) {
 	debug_dsk("DSK:: getSectorInfo_ID_extended()   track=%d side=%d sectorId=%02X\n", track, side, sectorId);
 
-	u32 posSectorInfo, posSectorData;
-	u16 sectorSize = 0;
-	posSectorInfo = posSectorData = getTrackPos(track, side);
-	debug_dsk("DSK:: pos_pista = %05lX\n", posSectorInfo);
+	u32 posSectorData = getTrackPos(track, side);  // inicio de la pista
+	debug_dsk("DSK:: pos_pista = %05lX\n", posSectorData);
 
-	fichero.seekg(posSectorInfo, std::ios::beg);  // posSectorInfo ahora tiene la pos de la pista
+	fichero.seekg(posSectorData, std::ios::beg);  // inicio de la pista
 	T_DskTrackInfo trackInfo;
 	trackInfo.load(fichero);
 	
-	posSectorInfo += sizeof(T_DskTrackInfo); // ahora apunta al primer sector
 	posSectorData += TRACK_HEADER_LEN; // apuntando a los datos del primer sector
 
 	//debug_fdc("DSK:: getSectorInfo_ID_extended()   sectores=%d\n", trackInfo.sectors); 
@@ -348,7 +345,7 @@ bool DSK:: getSectorInfo_ID_extended(u8 track, u8 side, u8 sectorId, T_SectorInf
 	for (u8 ns = 0; ns < trackInfo.sectors; ns++) {
 		sectorInfo->load(fichero);
 		//debug_dsk("DSK:: sectorId=%02X  sectorSize=%02X\n", sectorInfo->sectorId, sectorInfo->sectorSize); FLUSH
-		sectorSize = 0x0080 << sectorInfo->sectorSize;
+		//sectorSize = 0x0080 << sectorInfo->sectorSize;
 		//debug_dsk("DSK:: getSectorInfo_ID_extended()  bucle   sectorId=%02X  sectorSize=%02X  sectorPos=%05lX\n", 
 		//			sectorInfo->sectorId, sectorInfo->sectorSize, posSectorData);
 
@@ -359,7 +356,7 @@ bool DSK:: getSectorInfo_ID_extended(u8 track, u8 side, u8 sectorId, T_SectorInf
 			//debug_fdc("FDC:: getSector_ID()   sector_data_pos=%05lX\n", posSectorData);
 			return true; 
 		}
-		posSectorData += sectorSize;
+		posSectorData += sectorInfo->getDataLength();
 	}
 	return false;
 }
@@ -378,7 +375,7 @@ bool DSK:: getSectorInfo_ID_standard(u8 track, u8 side, u8 sectorId, T_SectorInf
 	fichero.seekg(posSectorInfo, std::ios::beg);  // posSectorInfo ahora tiene la pos de la pista
 	T_DskTrackInfo trackInfo;
 	trackInfo.load(fichero);
-	u16 sectorSize = 0x0080 << trackInfo.sectorSize;
+	u16 sectorSize = trackInfo.getSectorDataLength();
 	
 	posSectorInfo += sizeof(T_DskTrackInfo); // ahora apunta al primer sector
 	posSectorData += TRACK_HEADER_LEN; // apuntando a los datos del primer sector
@@ -506,7 +503,7 @@ void formatearPista(std::fstream& fout, FormatData* formatData) {
 	trackInfo.filler = formatData->getFillerByte();
 	trackInfo.gap = formatData->getGap();
 	trackInfo.write(fout);
-	//trackInfo.print();
+	trackInfo.print();
 
 	T_SectorInfo sectorInfo;
 
@@ -517,8 +514,10 @@ void formatearPista(std::fstream& fout, FormatData* formatData) {
 		sectorInfo.sectorSize = formatData->getSectorSize(s);
 		sectorInfo.dataLength = 0x0080 << formatData->getSectorSize(s);
 		sectorInfo.write(fout);
-		//sectorInfo.print();
+		sectorInfo.print();
 	}
+	debug_dsk("DSK:: rellego 0: %d\n",  TRACK_HEADER_LEN - sizeof(T_DskTrackInfo) - sizeof(T_SectorInfo) * formatData->getSectors());
+	debug_dsk("DSK:: rellego 0x%02X: %d\n", formatData->getFillerByte(), formatData->getTrackSize() - TRACK_HEADER_LEN);
 	rellenar(fout, TRACK_HEADER_LEN - sizeof(T_DskTrackInfo) - sizeof(T_SectorInfo) * formatData->getSectors(), 0);
 	rellenar(fout, formatData->getTrackSize() - TRACK_HEADER_LEN, formatData->getFillerByte());
 }
@@ -682,6 +681,17 @@ void DSK:: formatTrack(FormatData* formatData) {
 		debug_dsk("DSK:: NO reconstruir\n");
 		goTrackSide(formatData->getTrack(), formatData->getSide());
 		formatearPista(fichero, formatData);
+
+		//debug_dsk("DSK:: comprobar\n");
+		//goTrackSide(formatData->getTrack(), formatData->getSide());
+		//T_DskTrackInfo track;
+		//track.load(fichero);
+		//track.print();
+		//for (u8 s = 0; s < track.sectors; s++) {
+		//	T_SectorInfo sector;
+		//	sector.load(fichero);
+		//	sector.print();
+		//}
 	}
 }
 

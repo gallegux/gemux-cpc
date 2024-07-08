@@ -117,6 +117,9 @@ void T_DskTrackInfo:: load(std::fstream& f) {
     f.read(reinterpret_cast<char*>(this), sizeof(*this));
 }
 
+u16 T_DskTrackInfo:: getSectorDataLength() {
+    return 0x0080 << sectorSize;
+}
 
 void T_DskTrackInfo:: print() {
     debug_dsk("DSK:: track-header  track=%d side=%d sectors=%d\n", track, side, sectors);
