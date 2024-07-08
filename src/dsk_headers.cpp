@@ -132,11 +132,11 @@ T_SectorInfo:: T_SectorInfo(u8 _track, u8 _side, u8 _sectorId, u8 _sectorSize) {
     side = _side;
     sectorId = _sectorId;
     sectorSize = _sectorSize;
-    actualDataLen = 0x0080 << _sectorSize;
+    dataLength = 0x0080 << _sectorSize;
 }
-T_SectorInfo:: T_SectorInfo(u8 _track, u8 _side, u8 _sectorId, u8 _sectorSize, u16 _actualDataLen) {
+T_SectorInfo:: T_SectorInfo(u8 _track, u8 _side, u8 _sectorId, u8 _sectorSize, u16 _dataLen) {
     T_SectorInfo(_track, _side, _sectorId, _sectorSize);
-    actualDataLen = _actualDataLen;
+    dataLength = _dataLen;
 }
 
 void T_SectorInfo:: write(std::fstream& f) {
@@ -146,7 +146,11 @@ void T_SectorInfo:: load(std::fstream& f) {
     f.read(reinterpret_cast<char*>(this), sizeof(*this));
 }
 
+u16 T_SectorInfo:: getDataLength() {
+    return  (dataLength == 0)  ?  0x0080 << sectorSize
+                                  :  dataLength;
+}
 
 void T_SectorInfo:: print() {
-    debug_dsk("DSK:: sector-info  track=%d side=%d sectorID=%02X size1=%02X size2=%04X\n", track, side, sectorId, sectorSize, actualDataLen);
+    debug_dsk("DSK:: sector-info  track=%d side=%d sectorID=%02X size1=%02X size2=%04X\n", track, side, sectorId, sectorSize, dataLength);
 }

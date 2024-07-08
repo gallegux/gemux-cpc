@@ -154,15 +154,17 @@ public:     u8 sectorId = 0; // R
 public:     u8 sectorSize = 0; // N  , byte alto
 private:    u8 str1 = 0;
 private:    u8 str2 = 0;
-public:     u16 actualDataLen = 0; // el tamanio en bytes, solo se usa en los extended
+public:     u16 dataLength = 0; // el tamanio en bytes, solo se usa en los extended
 
 public:
 	T_SectorInfo();
 	T_SectorInfo(u8 _track, u8 _side, u8 _sectorId, u8 _sectorSize);
-	T_SectorInfo(u8 _track, u8 _side, u8 _sectorId, u8 _sectorSize, u16 _actualDataLen);
+	T_SectorInfo(u8 _track, u8 _side, u8 _sectorId, u8 _sectorSize, u16 _dataLen);
 
 	void write(std::fstream& f);
 	void load(std::fstream& f);
+
+	u16 getDataLength();
 
 	void print();
 };
@@ -257,13 +259,4 @@ public:
 	static void createTrack(std::fstream& dskFile, u8 pista, u8 caras, u8 sectores, u8 sectorSize, BYTE fillerByte, BYTE gap, BYTE primerSector);
 	static void create(std::string& f, u8 pistas, u8 sides, u8 sectores, u8 sectorSize, BYTE fillerByte, BYTE gap, BYTE primerSectorId);
 	
-	static void createStandardData(std::string& f); // 40 pistas, 9 sectores, 1 cara
-	static void createStandardSystem(std::string& f); // 40 pistas, 9 sectores, 1 cara
-
-	static void create35Data(std::string& f); // 80 pistas, 9 sectores, 2 caras
-	static void create35System(std::string& f); // 80 pistas, 9 sectores, 2 caras
-	
-	// TODO anadir mas tipos de discos
 };
-
-

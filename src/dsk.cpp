@@ -100,7 +100,7 @@ u16 DSK:: getTrackSideSize_extended() {
 	for (u8 s = 0; s < trackInfo.sectors; s++) {
 		sectorInfo.load(fichero);
 		//sectorInfo.print();
-		size += sectorInfo.actualDataLen;
+		size += sectorInfo.dataLength;
 	}
 	return size + TRACK_HEADER_LEN;
 }
@@ -123,7 +123,7 @@ i32 DSK:: getTrackPos(u8 track, u8 side) {
 
 i32 DSK:: goTrackSide(u8 track, u8 side) {
 	i32 fp = getTrackPos(track, side);
-	debug_dsk("DSK:: track,side pos  %04lX\n", fp);
+	debug_dsk("DSK:: goTrackSide() track,side pos   %02X,%d -> %05lX\n", track,side, fp);
 	fichero.seekg(fp, std::ios::beg);
 	fichero.seekp(fp, std::ios::beg);
 	return fp;
@@ -478,10 +478,10 @@ u16 copiarPista_standard(std::fstream& fin, std::fstream& fout) {
 	// calcular el nº total de bytes de los sectores, la posicion de cada uno y su tamano
 	for (u8 sector = 0; sector < trackInfo.sectors; sector++) {
 		sectorInfo.load(fin);
-		tamSector[sector] = sectorInfo.actualDataLen = 0x0080 << sectorInfo.sectorSize;
+		tamSector[sector] = sectorInfo.dataLength = 0x0080 << sectorInfo.sectorSize;
 		sectorInfo.write(fout);
 		posSector[sector] = posSector0 + sector * tamDatosSector;
-		tamPista += sectorInfo.actualDataLen;
+		tamPista += sectorInfo.dataLength;
 	}
 
 	u32 numBytes = 0x100 - fin.tellg() & 0x00FF;
@@ -515,7 +515,7 @@ void formatearPista(std::fstream& fout, FormatData* formatData) {
 		sectorInfo.side = formatData->getSide(s);
 		sectorInfo.sectorId = formatData->getSectorId(s);
 		sectorInfo.sectorSize = formatData->getSectorSize(s);
-		sectorInfo.actualDataLen = 0x0080 << formatData->getSectorSize(s);
+		sectorInfo.dataLength = 0x0080 << formatData->getSectorSize(s);
 		sectorInfo.write(fout);
 		//sectorInfo.print();
 	}
@@ -663,6 +663,7 @@ void DSK:: formatTrack(FormatData* formatData) {
 	if (extended) {
 		goTrackSide(formatData->getTrack(), formatData->getSide());
 		tamPistaActual = getTrackSideSize_extended();
+		tamPistaActual = (tamPistaActual + 128) & 0xFF00;
 	}
 	else {
 		tamPistaActual = dskHeader.trackSize;
@@ -685,25 +686,3 @@ void DSK:: formatTrack(FormatData* formatData) {
 }
 
 
-
-// --- creacion de discos standard ---
-
-void DSK:: createStandardData(std::string& fichero) {
-	create(fichero, 40, 1, 9, 2, 0xE5, 0x4E, 0xC1);
-}
-
-
-void DSK:: createStandardSystem(std::string& fichero) {
-	create(fichero, 40, 1, 9, 2, 0xE5, 0x4E, 0x41);
-}
-
-void DSK:: create35Data(std::string& fichero) {
-	create(fichero, 80, 2, 9, 2, 0xE5, 0x4E, 0xC1);
-}
-
-
-void DSK:: create35System(std::string& fichero) {
-	create(fichero, 80, 2, 9, 2, 0xE5, 0x4E, 0x41);
-}
-
-	

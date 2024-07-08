@@ -407,7 +407,7 @@ void FDC:: writeData() {
         if (sectorEncontrado) {
             debug_fdc("FDC:: writeData() sector encontrado\n");
             debug_fdc("FDC:: writeData() comprobacion tamanios sector %d,%d\n", p_tamSector, sectorInfo.sectorSize);
-            u16 sectorSize = ((u16) p_tamSector) << 8;
+            u16 sectorSize = sectorInfo.getDataLength();  // ((u16) p_tamSector) << 8;
             puntBuffer = buffer = new BYTE[sectorSize];
             finBuffer = buffer + sectorSize;
             bytesCopiados = false;
@@ -477,7 +477,7 @@ void FDC:: readData() {
                 //debug_fdc("FDC:: readData() sector encontrado\n");
                 u8 numSectores = p_ultSectorPista - p_sector + 1;
                 //debug_fdc("FDC:: readData() num sectores: %d\n", numSectores);
-                u16 bufferSize = (p_tamSector << 8) * numSectores;
+                u16 bufferSize = sectorInfo.getDataLength();  // sectorInfo.dataLength; // (p_tamSector << 8) * numSectores;
                 puntBuffer = buffer = new BYTE[bufferSize];
                 //debug_fdc("FDC:: readData() buffer_size=%d\n", bufferSize);
                 finBuffer = buffer + bufferSize;
