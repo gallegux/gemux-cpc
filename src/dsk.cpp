@@ -123,7 +123,7 @@ i32 DSK:: getTrackPos(u8 track, u8 side) {
 
 i32 DSK:: goTrackSide(u8 track, u8 side) {
 	i32 fp = getTrackPos(track, side);
-	debug_dsk("DSK:: goTrackSide() track,side pos   %02X,%d -> %05lX\n", track,side, fp);
+	debug_dsk("DSK:: track,side pos  %04lX\n", fp);
 	fichero.seekg(fp, std::ios::beg);
 	fichero.seekp(fp, std::ios::beg);
 	return fp;
@@ -375,7 +375,7 @@ bool DSK:: getSectorInfo_ID_standard(u8 track, u8 side, u8 sectorId, T_SectorInf
 	fichero.seekg(posSectorInfo, std::ios::beg);  // posSectorInfo ahora tiene la pos de la pista
 	T_DskTrackInfo trackInfo;
 	trackInfo.load(fichero);
-	u16 sectorSize = trackInfo.getSectorDataLength();
+	u16 sectorSize = 0x0080 << trackInfo.sectorSize;
 	
 	posSectorInfo += sizeof(T_DskTrackInfo); // ahora apunta al primer sector
 	posSectorData += TRACK_HEADER_LEN; // apuntando a los datos del primer sector
@@ -503,7 +503,7 @@ void formatearPista(std::fstream& fout, FormatData* formatData) {
 	trackInfo.filler = formatData->getFillerByte();
 	trackInfo.gap = formatData->getGap();
 	trackInfo.write(fout);
-	trackInfo.print();
+	//trackInfo.print();
 
 	T_SectorInfo sectorInfo;
 
@@ -514,10 +514,8 @@ void formatearPista(std::fstream& fout, FormatData* formatData) {
 		sectorInfo.sectorSize = formatData->getSectorSize(s);
 		sectorInfo.dataLength = 0x0080 << formatData->getSectorSize(s);
 		sectorInfo.write(fout);
-		sectorInfo.print();
+		//sectorInfo.print();
 	}
-	debug_dsk("DSK:: rellego 0: %d\n",  TRACK_HEADER_LEN - sizeof(T_DskTrackInfo) - sizeof(T_SectorInfo) * formatData->getSectors());
-	debug_dsk("DSK:: rellego 0x%02X: %d\n", formatData->getFillerByte(), formatData->getTrackSize() - TRACK_HEADER_LEN);
 	rellenar(fout, TRACK_HEADER_LEN - sizeof(T_DskTrackInfo) - sizeof(T_SectorInfo) * formatData->getSectors(), 0);
 	rellenar(fout, formatData->getTrackSize() - TRACK_HEADER_LEN, formatData->getFillerByte());
 }
@@ -662,7 +660,6 @@ void DSK:: formatTrack(FormatData* formatData) {
 	if (extended) {
 		goTrackSide(formatData->getTrack(), formatData->getSide());
 		tamPistaActual = getTrackSideSize_extended();
-		tamPistaActual = (tamPistaActual + 128) & 0xFF00;
 	}
 	else {
 		tamPistaActual = dskHeader.trackSize;
@@ -681,18 +678,29 @@ void DSK:: formatTrack(FormatData* formatData) {
 		debug_dsk("DSK:: NO reconstruir\n");
 		goTrackSide(formatData->getTrack(), formatData->getSide());
 		formatearPista(fichero, formatData);
-
-		//debug_dsk("DSK:: comprobar\n");
-		//goTrackSide(formatData->getTrack(), formatData->getSide());
-		//T_DskTrackInfo track;
-		//track.load(fichero);
-		//track.print();
-		//for (u8 s = 0; s < track.sectors; s++) {
-		//	T_SectorInfo sector;
-		//	sector.load(fichero);
-		//	sector.print();
-		//}
 	}
 }
 
 
+
+// --- creacion de discos standard ---
+
+void DSK:: createStandardData(std::string& fichero) {
+	create(fichero, 40, 1, 9, 2, 0xE5, 0x4E, 0xC1);
+}
+
+
+void DSK:: createStandardSystem(std::string& fichero) {
+	create(fichero, 40, 1, 9, 2, 0xE5, 0x4E, 0x41);
+}
+
+void DSK:: create35Data(std::string& fichero) {
+	create(fichero, 80, 2, 9, 2, 0xE5, 0x4E, 0xC1);
+}
+
+
+void DSK:: create35System(std::string& fichero) {
+	create(fichero, 80, 2, 9, 2, 0xE5, 0x4E, 0x41);
+}
+
+	

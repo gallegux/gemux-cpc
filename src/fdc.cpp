@@ -484,23 +484,31 @@ void FDC:: readData() {
             //debug_fdc("FDC:: readData() pista formateada\n");
             T_SectorInfo sectorInfo;
             if (activeDsk->getSectorInfo_ID(p_pista, p_cabezal, p_sector, &sectorInfo)) { // sector encontrado
-                //debug_fdc("FDC:: readData() sector encontrado\n");
-                u8 numSectores = p_ultSectorPista - p_sector + 1;
-                //debug_fdc("FDC:: readData() num sectores: %d\n", numSectores);
-                u16 bufferSize = sectorInfo.getDataLength();  // sectorInfo.dataLength; // (p_tamSector << 8) * numSectores;
-                puntBuffer = buffer = new BYTE[bufferSize];
-                //debug_fdc("FDC:: readData() buffer_size=%d\n", bufferSize);
-                finBuffer = buffer + bufferSize;
-                activeDsk->readSectorData(bufferSize, buffer); // obtener datos
-                // comprobamos que tenemos los datos que queremos
-                //debug_fdc("DATOS SECTOR DISCO: ");
-                //printBuffer();
-                regEstado0 = R0_IC_COMANDO_INTERRUMPIDO; // realmente no es un error ni comando interrumpido, ver documentacion
-                regEstado1 = R1_EN_END_OF_TRACK; // en el emulador caprice se ve que para todas las lecturas correctas devuelve 0x40 0x80
-                bytesCopiados = false;
-                f_fdcBusy = true;
-                fase = FASE_EJECUCION;
-                dio = FDC_A_CPU;
+                if (sectorInfo.fdcSt1 & R1_DE_DATA_ERROR  ||  sectorInfo.fdcSt2 & R2_DD_DATA_ERROT_IN_DATA) {
+                    regEstado0 = R0_IC_COMANDO_INTERRUMPIDO;
+                    regEstado1 = R1_ND_NO_DATA;
+                    fase = FASE_RESULTADO;
+                    dio = FDC_A_CPU;
+                }
+                else {
+                    //debug_fdc("FDC:: readData() sector encontrado\n");
+                    u8 numSectores = p_ultSectorPista - p_sector + 1;
+                    //debug_fdc("FDC:: readData() num sectores: %d\n", numSectores);
+                    u16 bufferSize = (p_tamSector << 8) * numSectores;
+                    puntBuffer = buffer = new BYTE[bufferSize];
+                    //debug_fdc("FDC:: readData() buffer_size=%d\n", bufferSize);
+                    finBuffer = buffer + bufferSize;
+                    activeDsk->readSectorData(bufferSize, buffer); // obtener datos
+                    // comprobamos que tenemos los datos que queremos
+                    //debug_fdc("DATOS SECTOR DISCO: ");
+                    //printBuffer();
+                    regEstado0 = R0_IC_COMANDO_INTERRUMPIDO; // realmente no es un error ni comando interrumpido, ver documentacion
+                    regEstado1 = R1_EN_END_OF_TRACK; // en el emulador caprice se ve que para todas las lecturas correctas devuelve 0x40 0x80
+                    bytesCopiados = false;
+                    f_fdcBusy = true;
+                    fase = FASE_EJECUCION;
+                    dio = FDC_A_CPU;
+                }
             }
             else {
                 debug_fdc("FDC:: sector no encontrado\n");
@@ -516,11 +524,13 @@ void FDC:: readData() {
             regEstado0 |= R0_IC_COMANDO_INTERRUMPIDO;
             regEstado1 |= R1_MA_MISSING_ADDRESS_MARK;
             fase = FASE_RESULTADO;
+            dio = FDC_A_CPU;
         }
     }
     else {
         regEstado2 = R2_WC_WRONG_CYLINDER;
         if (p_pista == 0xFF) regEstado2 |= R2_BC_BAD_CYLINDER;
+        dio = FDC_A_CPU;
     }
     regEstado0 |= p_unidad;
     setOutputBytes_RS012_CHRN(p_pista, p_cabezal, p_sector, p_tamSector);
@@ -566,7 +576,7 @@ void FDC:: senseInterruptStaus() {
     
     bool cambio = false;
     // mirar en que disco se ha completado el seek
-    for (u8 d = 0; d < 2 && !cambio; d++) {
+    for (u8 d = 0; d < 4 && !cambio; d++) {
         if (f_seek[d]) {
             debug_fdc("FDC:: ssi1 %d\n", d);
             regEstado0 |= R0_SE_SEEK_END | d;
@@ -579,11 +589,11 @@ void FDC:: senseInterruptStaus() {
         }
     }
     if (!cambio) { // invalid comand
-        for (u8 d = 0; d < 2 && !cambio; d++) {
+        for (u8 d = 0; d < 4 && !cambio; d++) {
             if (f_statusChanged[d]) {
                 debug_fdc("FDC:: ssi2 %d\n", d);
                 regEstado0 |= R0_IC_COMANDO_INTERRUMPIDO2 | d;  // comando interrumpido
-                if (disk[d] == nullptr || (!disk[d]->isFormatted() || !motorOn))  regEstado0 |= R0_NR_NOT_READY;
+                //if (disk[d] == nullptr || (!disk[d]->isFormatted() || !motorOn))  regEstado0 |= R0_NR_NOT_READY;
                 //SET4(f_statusChanged, false); //f_seek[d] = false;
                 f_statusChanged[d] = false;
                 bytesSalida[1] = activeTrack[d];
@@ -664,10 +674,10 @@ void FDC:: formatTrack() {
     p_gap = bytesEntrada[4];
     BYTE p_fillByte = bytesEntrada[5];
     // se supone que formatea la pista despues del seek o recalibrate
-    activeDsk = disk[p_unidad];
     debug_fdc("FDC:: HD_dr=%d HD_hd=%d pista=%d SZ=%d sectores=%d GP=%02X FB=%02X\n", 
-            p_unidad, p_cabezal, activeTrack[p_unidad],
+            p_unidad, p_cabezal, p_pista,
             p_tamSector, p_ultSectorPista, p_gap, p_fillByte);
+    activeDsk = disk[p_unidad];
 
     regEstado0 = p_unidad;
     regEstado1 = 0;
