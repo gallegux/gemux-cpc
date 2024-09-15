@@ -75,7 +75,7 @@ DSK:: ~DSK() {
 }
 
 
-u32  DSK:: getTamFichero()	{ return tamFichero; }
+u32  DSK:: getFileSize()	{ return tamFichero; }
 u16  DSK:: getTrackSideSize_standard() 	{ return dskHeader.getTrackSize(); }
 bool DSK:: isFormatted() 	{ return dskHeader.tracks > 0; }
 u8   DSK:: getTracks() 		{ return dskHeader.tracks; }
@@ -123,7 +123,7 @@ i32 DSK:: getTrackPos(u8 track, u8 side) {
 
 i32 DSK:: goTrackSide(u8 track, u8 side) {
 	i32 fp = getTrackPos(track, side);
-	debug_dsk("DSK:: track,side pos  %04lX\n", fp);
+	//debug_dsk("DSK:: track,side pos  %04lX\n", fp);
 	fichero.seekg(fp, std::ios::beg);
 	fichero.seekp(fp, std::ios::beg);
 	return fp;
@@ -206,6 +206,7 @@ void DSK:: crearTabla(u8 pistas, u8 caras) {
 }
 
 
+//---------------------------------------------------------------------------------------------------------
 
 void DSK:: open_standard(std::string& f) {
 	debug_dsk("DSK:: open() fichero=%s tam=%ld tracks=%d sides=%d trackSize=%04X extended=%d\n", 
@@ -305,18 +306,70 @@ void DSK:: getTrackInfo(u8 track, u8 side, T_DskTrackInfo* trackInfo) {
 }
 
 
+/*void DSK:: getTrackSectorsData(u8 track, u8 side, std::vector<T_SectorInfo>& sectores, u16* trackDataLen) {
+	goTrackSide(track, side);
+	T_DskTrackInfo trackInfo;
+	trackInfo.load(fichero);
+	trackInfo.print();
+
+	debug_dsk("DSK:: getTrackDataLength() extended=%d sectores=%d\n", extended, trackInfo.sectors);
+
+	*trackDataLen = 0;
+	for (u8 s = 0; s < trackInfo.sectors; s++) {
+		T_SectorInfo sectorInfo;
+		sectorInfo.load(fichero);
+		sectorInfo.print();
+		sectores.push_back(sectorInfo);
+		*trackDataLen += sectorInfo.getDataLength();
+	}
+*/
+	/*
+	if (extended) {
+		*trackDataLength = trackInfo.sectors * trackInfo.getSectorDataLength();
+		// ultimo sector
+		fichero.seekg( (trackInfo.sectors-1) * trackInfo.getSectorDataLength() , std::ios::cur);
+		sectorInfo.load(fichero);
+	}
+	else {
+		u16 sum = 0;
+		debug_dsk("DSK:: getTrackDataLength() sectores=%d\n", trackInfo.sectors);
+		for (u8 s = 0; s < trackInfo.sectors; s++) {
+			sectorInfo.load(fichero);
+			sectorInfo.print();
+			sectores.push_back(sectorInfo);
+		}
+	}
+	*/
+	// avanzar
+//	fichero.seekg(TRACK_HEADER_LEN - sizeof(T_DskTrackInfo) - sizeof(T_SectorInfo) * trackInfo.sectors, 
+//					std::ios::cur);
+//}
+
+
+void DSK:: getTrack(u8 track, u8 side, T_DskTrackInfo* trackInfo, std::vector<T_SectorInfo>& sectores) {
+	getTrackInfo(track, side, trackInfo);
+
+	for (u8 s = 0; s < trackInfo->sectors; s++) {
+		T_SectorInfo sectorInfo;
+		sectorInfo.load(fichero);
+		debug_dsk("DSK:: getTrack() ");
+		sectorInfo.print();
+		sectores.push_back(sectorInfo);
+	}
+}
+
 
 // la finalidad de este metodo es obtener el sectorId
 // se invoca a traves de la funcion readId
 void DSK:: getSectorInfo_N(u8 track, u8 side, u8 numSector, T_SectorInfo* sectorInfo) {
-	debug_fdc("FDC:: getSectorInfo_N   track=%d side=%d sector=%02X\n", track, side, numSector);
+	debug_fdc("FDC:: getSectorInfo_N   track=%d side=%d sector=%d\n", track, side, numSector);
 
 	T_DskTrackInfo trackInfo;
-	u8 sector = 0;
 	getTrackInfo(track, side, &trackInfo);
 
-	if (numSector < trackInfo.sectors) numSector = trackInfo.sectors-1;
+	if (numSector > trackInfo.sectors) numSector = trackInfo.sectors;
 
+	u8 sector = 0;
 	do {
 		sectorInfo->load(fichero);
 	} while (++sector < numSector);
@@ -608,7 +661,8 @@ void DSK:: rebuild_extended(FormatData* formatData) {
 			}
 		}
 	}
-	debug_dsk("DSK:: rellenar hasta 0x100  %d\n", DSK_HEADER_LEN - sizeof(T_DskHeader) - newDskHeader.tracks);
+	debug_dsk("DSK:: rellenar hasta 0x100  %ld\n", 
+		DSK_HEADER_LEN - sizeof(T_DskHeader) - newDskHeader.tracks);
 
 	// rellenar con 0s hasta 0x100
 	rellenar(fout, DSK_HEADER_LEN - sizeof(T_DskHeader) - newDskHeader.tracks, 0);	
@@ -681,26 +735,3 @@ void DSK:: formatTrack(FormatData* formatData) {
 	}
 }
 
-
-
-// --- creacion de discos standard ---
-
-void DSK:: createStandardData(std::string& fichero) {
-	create(fichero, 40, 1, 9, 2, 0xE5, 0x4E, 0xC1);
-}
-
-
-void DSK:: createStandardSystem(std::string& fichero) {
-	create(fichero, 40, 1, 9, 2, 0xE5, 0x4E, 0x41);
-}
-
-void DSK:: create35Data(std::string& fichero) {
-	create(fichero, 80, 2, 9, 2, 0xE5, 0x4E, 0xC1);
-}
-
-
-void DSK:: create35System(std::string& fichero) {
-	create(fichero, 80, 2, 9, 2, 0xE5, 0x4E, 0x41);
-}
-
-	

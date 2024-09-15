@@ -26,9 +26,10 @@
 
 
 #include "tipos.h"
-#include "dispositivo.h"
+#include "io_device.h"
 #include "dsk.h"
 
+#define MAX_DRIVES 4
 
 // comandos
 #define CMD_READ_TRACK              0x02
@@ -93,8 +94,8 @@
 #define R3_FT_FAULT             0x80 // (if supported: 1=Drive failure)
 
 // TODO: ajustar estos dos valores
-#define CICLOS_ENTRE_LECTURAS   22
-#define CICLOS_ENTRE_ESCRITURAS 25
+#define CICLOS_ENTRE_LECTURAS   26
+#define CICLOS_ENTRE_ESCRITURAS 30
 
 
 enum FDC_Fase { LIBRE, FASE_COMANDO, FASE_EJECUCION, FASE_RESULTADO};
@@ -102,29 +103,29 @@ enum FDC_DIO  { CPU_A_FDC, FDC_A_CPU}; // 0=CPU->FDC, 1=FDC->CPU
 
 
 
-class FDC : public Dispositivo
+class FDC : public IODevice
 {
-    DSK* activeDsk;
-    DSK* disk[4] = {nullptr};   // el controlador puede con 4 unidades
-    u8 activeTrack[4] = {0};
-    u8 activeSide[4] = {0};
+    DSK* currentDsk;
+    DSK* disk[MAX_DRIVES] = {nullptr};   // el controlador puede con 4 unidades
+    u8 currentSide[MAX_DRIVES] = {0};
+    u8 currentTrack[MAX_DRIVES] = {0};
+    u8 currentSector[MAX_DRIVES] = {0};
 
     // FLAGS varios
-    bool f_seek[4] = {false};
-    bool f_statusChanged[4] = {false};
-    bool f_scanFailed;
-    bool f_overrun;
-    bool f_randomSectors;
-    bool f_skip;
+    bool f_seek[MAX_DRIVES] = {false};
+    bool f_statusChanged[MAX_DRIVES] = {false};
+    //bool f_scanFailed;
+    //bool f_overrun;
+    //bool f_skip;
     // estas se utilizan para el registro principal de estado
-    bool f_driveBusy[4] = {false};
+    bool f_driveBusy[MAX_DRIVES] = {false};
     bool f_fdcBusy;
     FDC_Fase fase;
     FDC_DIO dio;
 
     BYTE regEstado0, regEstado1, regEstado2;
     
-    bool led = false;
+    bool led = false; // por si se visualiza el led de la disquetera
     i8 contadorReady = 0; // para emular los tiempos normales
     bool ready = true; // aplica cuando turboMode=false, cuando se escribe o lee hay un tiempo entre lecturas o escrituras
     bool turboMode = false; // para que vaya mas rapido, si esta a true RQM siempre sera 1
@@ -146,8 +147,9 @@ class FDC : public Dispositivo
     PtrFuncion ptrFuncion;
 
     FormatData* formatData;
+    ReadTrackData* readTrackData;
 
-    void prepareCommandFDC(u8 numBytesEntrada, u8 numBytesSalida, bool led, PtrFuncion funcion);
+    void prepareCommandFDC(u8 numBytesEntrada, u8 numBytesSalida, FDC_DIO _dio, bool led, PtrFuncion funcion);
 
     void getParam_MT();
     void getParam_MF();
@@ -174,6 +176,8 @@ class FDC : public Dispositivo
     void writeData_execution(BYTE dato);
     void writeDeletedData();
     void readTrack();
+    void readTrack_execution(BYTE* dato);
+    void readTrack_readSector();
     void readId();
     void formatTrack();
     void formatTrack_execution(BYTE dato);

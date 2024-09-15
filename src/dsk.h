@@ -28,6 +28,7 @@
 #pragma once
 
 #include <list>
+#include <vector>
 #include <string>
 #include <fstream>
 #include <string.h>
@@ -43,11 +44,11 @@
 #define TRACK_TABLE_POS 0x34
 
 // errores en lectura/escritura
-#define DSK_PROTECTED -4
-#define DSK_SECTOR_NOT_FOUND -3
-#define DSK_TRACK_NOT_FOUND -2
-#define DSK_SIDE_NOT_FOUND -1
-#define DSK_NOT_VALID_FORMAT -10
+//#define DSK_PROTECTED -4
+//#define DSK_SECTOR_NOT_FOUND -3
+//#define DSK_TRACK_NOT_FOUND -2
+//#define DSK_SIDE_NOT_FOUND -1
+//#define DSK_NOT_VALID_FORMAT -10
 
 
 #define FD_TRACK 0
@@ -56,7 +57,10 @@
 #define FD_SECTOR_SIZE 3
 
 
+#define TRACK_BYTES 6250
 
+
+// clase que se usa en el proceso de formatear discos
 class FormatData
 {
 	u8 track, side, sectors;
@@ -86,16 +90,75 @@ public:
 };
 
 
+/* para la funcion ReadTrack
+	se guarda en memoria los 6250 bytes de una pista: cabeceras (se crean) y datos (que los obtenemos)
 
+	El gran libro del floppy, pag. 228
+
+	PISTA:
+		GAP4A: 80 bytes con valor 0x4E
+		SYNC: 12 bytes a 0x00
+		IAM: 3 bytes
+		* 1 byte a 0xFC
+		GAP1: 50 bytes a 0x4E
+		SYNC: 12 bytes a 0x00
+		ID-AM: 3 bytes
+		* 1 byte a 0xFB
+	SECTORES:
+		ID: 4 bytes -> pista, cara, sector, long.sector
+		CRC: 2 bytes
+		GAP2: 22 bytes a 0xE
+		SYNC: 12 bytes a 0x00
+		DATA AM: 3 bytes
+		* 1 byte a 0xFE
+		DATA FIELD: Inicialmente bytes con el FILLER_BYTE tras formateo
+		CRC: 2 bytes
+		GAP3: 82 bytes a 0x4E
+	RELLENO PISTA:
+		Bytes sobrantes a 0x4E
+*/
+class T_DskRawTrack
+{
+	BYTE* rawData;
+	BYTE* finRawData;
+	//u8 sectores = 0;
+	std::vector<BYTE*> iniciosDatosSectores;
+
+	BYTE gap4A[80] = {0x4E};
+	BYTE trackSync1[12] = {0};
+	BYTE iam[3] = {0};
+	BYTE byteFC = 0xFC;
+	BYTE gap1[50] = {0x4E};
+	BYTE trackSync2[12] = {0};
+	BYTE idam[3] = {0};
+	BYTE byteFB = 0xFB;
+	// 162 bytes hasta aqui
+
+	BYTE* ptrRawData;
+
+	T_DskRawTrack();
+	~T_DskRawTrack();
+
+	void addBlockBytes(u8 numBytes, BYTE value);
+	void addSector(u8 pista, u8 cara, u8 sector, u8 longSector, BYTE* buffer);
+	bool searchSector(u8 pista, u8 cara, u8 sector);
+	BYTE getByte();
+
+};
+
+
+// cabecera del DSK
 #pragma pack(push, 1)
 class T_DskHeader 
 {
-private:    u8 fileType[34] = {0};
-private:    u8 creator[14] = {'G','e','m','u','x','-','C','P','C',' ',' ',' ',' ',' '};
-public:     u8 tracks = 0;
-public:     u8 sides = 0;
-public:     u16 trackSize = 0; // solo aplica para los discos standard
-	        // a continuacion track size table para los extended
+private:
+	u8 fileType[34] = {0};
+	u8 creator[14] = {'G','e','m','u','x','-','C','P','C',' ',' ',' ',' ',' '};
+public:
+	u8 tracks = 0;
+	u8 sides = 0;
+	u16 trackSize = 0; // solo aplica para los discos standard
+	                   // a continuacion track size table para los extended
 public:
 	T_DskHeader();
 	T_DskHeader(u8 _tracks, u8 _sides);
@@ -115,7 +178,7 @@ public:
 #pragma pack(pop)
 
 
-
+// cabecera de las pistas
 #pragma pack(push, 1)
 class T_DskTrackInfo
 {
@@ -140,13 +203,14 @@ public:
 	void write(std::fstream& f);
 	void load(std::fstream& f);
 
-	u16 getSectorDataLength(); // solo para los discos standar
+	u16 getSectorDataLength(); // solo para los discos standard
 
 	void print();
 };
 #pragma pack(pop)
 
 
+// informacion de cada uno de los sectores tras la cabecera de la pista
 #pragma pack(push, 1)
 class T_SectorInfo 
 {
@@ -172,6 +236,32 @@ public:
 };
 #pragma pack(pop)
 
+
+// clase que se usa en el proceso de leer una pista completa
+class ReadTrackData
+{
+private:
+	u8 track, side, numSectoresEscanear, numSectoresEscaneados, currentSector;
+	i8 endTrackCount;
+	u16 sectorSize;
+	std::vector<T_SectorInfo> sectors;
+
+public:
+	ReadTrackData(T_DskTrackInfo* trackInfo, std::vector<T_SectorInfo> sectores, u8 _sectorSize, u8 numSectoresEscanear);
+
+	u8 getTrack();
+	u8 getSide();
+	u16 getSectorSize();
+	u8 getCurrentSector();
+	u8 getNumSectoresEscanear();
+	u8 getNumSectoresEscaneados();
+
+	void goFirstSector();
+	void nextSector();
+	T_SectorInfo& getSector();
+	u8 getEndTrackCounter();
+	//void getSectorByID(BYTE sectorId, T_SectorInfo* sectorInfo);
+};
 
 
 
@@ -227,15 +317,17 @@ public:
 	void setProtected(bool p);
 	bool flipProtected();
 
-	u32 getTamFichero();
+	u32 getFileSize(); // devuelve el tamanio del fichero .dsk
 
 	//bool existsTrackInFile(u8 track); // comprueba si hay datos de la pista en el fichero
 
 	i32  getTrackPos(u8 track, u8 side); // consulta la tabla y devuelve la posicion de una pista
 	i32  goTrackSide(u8 track, u8 side); // pone PE y PL en el inicio de la pista
 	void getTrackInfo(u8 track, u8 side, T_DskTrackInfo* trackInfo);
+	//void getTrackSectorsData(u8 track, u8 side, std::vector<T_SectorInfo>& sectores, u16* trackDataLen);
+	void getTrack(u8 track, u8 side, T_DskTrackInfo* trackInfo, std::vector<T_SectorInfo>& sectores);
 
-	void getSectorInfo_N (u8 track, u8 side, u8 sector,   T_SectorInfo* sectorInfo);
+	void getSectorInfo_N(u8 track, u8 side, u8 sector, T_SectorInfo* sectorInfo);
 
 	// obtiene el sector con el ID indicado
 	// devuelve true si lo encuentra, false en el caso contrario
@@ -256,18 +348,10 @@ public:
 	void formatTrack(FormatData *formatData);
 
 	// metodos estaticos
-
 	static void createTrackSide(std::fstream& dskFile, u8 pista, u8 cara, u8 sectores, u8 sectorSize, BYTE fillerByte, BYTE gap, BYTE primerSectorId);
 	static void createTrack(std::fstream& dskFile, u8 pista, u8 caras, u8 sectores, u8 sectorSize, BYTE fillerByte, BYTE gap, BYTE primerSector);
 	static void create(std::string& f, u8 pistas, u8 sides, u8 sectores, u8 sectorSize, BYTE fillerByte, BYTE gap, BYTE primerSectorId);
-	
-	static void createStandardData(std::string& f); // 40 pistas, 9 sectores, 1 cara
-	static void createStandardSystem(std::string& f); // 40 pistas, 9 sectores, 1 cara
 
-	static void create35Data(std::string& f); // 80 pistas, 9 sectores, 2 caras
-	static void create35System(std::string& f); // 80 pistas, 9 sectores, 2 caras
-	
-	// TODO anadir mas tipos de discos
 };
 
 
