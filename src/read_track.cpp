@@ -106,7 +106,7 @@ T_DskRawTrack:: ~T_DskRawTrack() {
 	finRawData = nullptr;
 }
 
-void T_DskRawTrack:: addBlockBytes(u8 numBytes, BYTE value) {
+void T_DskRawTrack:: addBlockBytes(u16 numBytes, BYTE value) {
 	for (u8 cont = 0; cont < numBytes; numBytes++) *ptrRawData++ = value;
 }
 
