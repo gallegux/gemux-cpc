@@ -28,74 +28,76 @@
 #include "tipos.h"
 #include "io_device.h"
 #include "dsk.h"
+#include "sna.h"
+
 
 #define MAX_DRIVES 4
 
 // comandos
-#define CMD_READ_TRACK              0x02
-#define CMD_SPECIFY                 0x03
-#define CMD_SENSE_DRIVE_STATUS      0x04
-#define CMD_WRITE_DATA              0x05
-#define CMD_READ_DATA               0x06
-#define CMD_RECALIBRATE             0x07
-#define CMD_SESE_INTERRUPT_STATUS   0x08
-#define CMD_WRITE_DELETED_DATA      0x09
-#define CMD_READ_ID                 0x0A
-#define CMD_READ_DELETED_DATA       0x0C
-#define CMD_FORMAT_TRACK            0x0D
-#define CMD_SEEK                    0x0F
-#define CMD_SCAN_EQUAL              0x11
-#define CMD_SCAN_LOW_OR_EQUAL       0x19
-#define CMD_SCAN_HIGH_OR_EQUAL      0x1D
-#define CMD_NONE                    0xFF
+constexpr BYTE CMD_READ_TRACK            = 0x02;
+constexpr BYTE CMD_SPECIFY               = 0x03;
+constexpr BYTE CMD_SENSE_DRIVE_STATUS    = 0x04;
+constexpr BYTE CMD_WRITE_DATA            = 0x05;
+constexpr BYTE CMD_READ_DATA             = 0x06;
+constexpr BYTE CMD_RECALIBRATE           = 0x07;
+constexpr BYTE CMD_SESE_INTERRUPT_STATUS = 0x08;
+constexpr BYTE CMD_WRITE_DELETED_DATA    = 0x09;
+constexpr BYTE CMD_READ_ID               = 0x0A;
+constexpr BYTE CMD_READ_DELETED_DATA     = 0x0C;
+constexpr BYTE CMD_FORMAT_TRACK          = 0x0D;
+constexpr BYTE CMD_SEEK                  = 0x0F;
+constexpr BYTE CMD_SCAN_EQUAL            = 0x11;
+constexpr BYTE CMD_SCAN_LOW_OR_EQUAL     = 0x19;
+constexpr BYTE CMD_SCAN_HIGH_OR_EQUAL    = 0x1D;
+constexpr BYTE CMD_NONE                  = 0xFF;
 
 // main register
-#define MR_RQM_READY                0x80 // (1=ready for next byte)
-#define MR_DIO_CPU_TO_FDC           0x00
-#define MR_DIO_FDC_TO_CPU           0x40
-#define MR_EXM_EXECUTION_MODE       0x20 // (still in execution-phase, non_DMA_only)
-#define MR_FDC_BUSY                 0x10 // (still in command-, execution- or result-phase)
+constexpr BYTE MR_RQM_READY          = 0x80; // (1=ready for next byte)
+constexpr BYTE MR_DIO_CPU_TO_FDC     = 0x00;
+constexpr BYTE MR_DIO_FDC_TO_CPU     = 0x40;
+constexpr BYTE MR_EXM_EXECUTION_MODE = 0x20; // (still in execution-phase, non_DMA_only)
+constexpr BYTE MR_FDC_BUSY           = 0x10; // (still in command-, execution- or result-phase)
 
 // registro 0
-#define R0_HD_HEAD_ADDRESS          0x04 // (head during interrupt)
-#define R0_NR_NOT_READY             0x08 // (drive not ready or non-existing 2nd head selected)
-#define R0_EC_EQUIPMENT_CHECK       0x10 // (drive failure or recalibrate failed (retry))
-#define R0_SE_SEEK_END              0x20 // (Set if seek-command completed)
+constexpr BYTE R0_HD_HEAD_ADDRESS    = 0x04; // (head during interrupt)
+constexpr BYTE R0_NR_NOT_READY       = 0x08; // (drive not ready or non-existing 2nd head selected)
+constexpr BYTE R0_EC_EQUIPMENT_CHECK = 0x10; // (drive failure or recalibrate failed (retry))
+constexpr BYTE R0_SE_SEEK_END        = 0x20; // (Set if seek-command completed)
 // codigos de interrupcion
-#define R0_IC_COMANDO_OK            0x00
-#define R0_IC_COMANDO_INTERRUMPIDO  0x40
-#define R0_IC_COMANDO_INVALIDO      0x80
-#define R0_IC_COMANDO_INTERRUMPIDO2 0xC0
+constexpr BYTE R0_IC_COMANDO_OK            = 0x00;
+constexpr BYTE R0_IC_COMANDO_INTERRUMPIDO  = 0x40;
+constexpr BYTE R0_IC_COMANDO_INVALIDO      = 0x80;
+constexpr BYTE R0_IC_COMANDO_INTERRUMPIDO2 = 0xC0;
 
 // registro 1
-#define R1_MA_MISSING_ADDRESS_MARK  0x01 // Missing Address Mark (Sector_ID or DAM not found)
-#define R1_NW_NOT_WRITEABLE         0x02 // (tried to write/format disc with wprot_tab=on)
-#define R1_ND_NO_DATA               0x04 // (Sector_ID not found, CRC fail in ID_field)
-#define R1_OR_OVER_RUN              0x20 // (CPU too slow in execution-phase (ca. 26us/Byte))
-#define R1_DE_DATA_ERROR            0x40 // (CRC-fail in ID- or Data-Field)
-#define R1_EN_END_OF_TRACK          0x80 // (set past most read/write commands) (see IC)
+constexpr BYTE R1_MA_MISSING_ADDRESS_MARK = 0x01; // Missing Address Mark (Sector_ID or DAM not found)
+constexpr BYTE R1_NW_NOT_WRITEABLE        = 0x02; // (tried to write/format disc with wprot_tab=on)
+constexpr BYTE R1_ND_NO_DATA              = 0x04; // (Sector_ID not found, CRC fail in ID_field)
+constexpr BYTE R1_OR_OVER_RUN             = 0x20; // (CPU too slow in execution-phase (ca. 26us/Byte))
+constexpr BYTE R1_DE_DATA_ERROR           = 0x40; // (CRC-fail in ID- or Data-Field)
+constexpr BYTE R1_EN_END_OF_TRACK         = 0x80; // (set past most read/write commands) (see IC)
 
 // registro 2
-#define R2_MD_MISSING_ADDRESS_MARK_IN_DATA_FIELD    0x01  // (DAM not found)
-#define R2_BC_BAD_CYLINDER                          0x02// (read/programmed track-ID different and read-ID = FF)
-#define R2_SN_SCAN_NOT_SATISFIED                    0x04  // (no fitting sector found)
-#define R2_SH_SCAN_EQUAL_HIT                        0x08 // (equal)
-#define R2_WC_WRONG_CYLINDER                        0x10 // (read/programmed track-ID different) (see b1)
-#define R2_DD_DATA_ERROT_IN_DATA                    0x20 // (CRC-fail in data-field)
-#define R2_CM_CONTROL_MARK                          0x40 // (read/scan command found sector with deleted DAM)
+constexpr BYTE R2_MD_MISSING_ADDRESS_MARK_IN_DATA_FIELD = 0x01;  // (DAM not found)
+constexpr BYTE R2_BC_BAD_CYLINDER                       = 0x02;// (read/programmed track-ID different and read-ID = FF)
+constexpr BYTE R2_SN_SCAN_NOT_SATISFIED                 = 0x04;  // (no fitting sector found)
+constexpr BYTE R2_SH_SCAN_EQUAL_HIT                     = 0x08; // (equal)
+constexpr BYTE R2_WC_WRONG_CYLINDER                     = 0x10; // (read/programmed track-ID different) (see b1)
+constexpr BYTE R2_DD_DATA_ERROT_IN_DATA                 = 0x20; // (CRC-fail in data-field)
+constexpr BYTE R2_CM_CONTROL_MARK                       = 0x40; // (read/scan command found sector with deleted DAM)
 
 // registro 3
-#define R3_US_UNIT_SELECT       0x03 // (pin 28,29 of FDC)
-#define R3_HD_HEAD_ADDRESS      0x04 // (pin 27 of FDC)
-#define R3_TS_TWO_SIDE          0x08 // (0=yes, 1=no (!))
-#define R3_T0_TRACK_0           0x10 // (on track 0 we are)
-#define R3_RY_READY             0x20 // (drive ready signal)
-#define R3_WP_WRITE_PROTECTED   0x40 // (write protected)
-#define R3_FT_FAULT             0x80 // (if supported: 1=Drive failure)
+constexpr BYTE R3_US_UNIT_SELECT     = 0x03; // (pin 28,29 of FDC)
+constexpr BYTE R3_HD_HEAD_ADDRESS    = 0x04; // (pin 27 of FDC)
+constexpr BYTE R3_TS_TWO_SIDE        = 0x08; // (0=yes, 1=no (!))
+constexpr BYTE R3_T0_TRACK_0         = 0x10; // (on track 0 we are)
+constexpr BYTE R3_RY_READY           = 0x20; // (drive ready signal)
+constexpr BYTE R3_WP_WRITE_PROTECTED = 0x40; // (write protected)
+constexpr BYTE R3_FT_FAULT           = 0x80; // (if supported: 1=Drive failure)
 
 // TODO: ajustar estos dos valores
-#define CICLOS_ENTRE_LECTURAS   26
-#define CICLOS_ENTRE_ESCRITURAS 30
+constexpr u8 CICLOS_ENTRE_LECTURAS   = 26;
+constexpr u8 CICLOS_ENTRE_ESCRITURAS = 30;
 
 
 enum FDC_Fase { LIBRE, FASE_COMANDO, FASE_EJECUCION, FASE_RESULTADO};
@@ -146,6 +148,7 @@ class FDC : public IODevice
     typedef void (FDC::*PtrFuncion)();
     PtrFuncion ptrFuncion;
 
+    // punteros a las estructuras que se crean en el proceso de formateo
     FormatData* formatData;
     ReadTrackData* readTrackData;
 
@@ -196,7 +199,7 @@ public:
     FDC();
     void reset() override;
 
-    void setTurboMode(bool turbo);
+    void setTurboMode(bool turbo); // para reducir las esperas del dato disponibles
     
     bool OUT(WORD puerto, BYTE dato) override;
     bool IN(WORD puerto, BYTE* dato) override;
@@ -205,6 +208,9 @@ public:
   
     void setDisk(u8 drive, DSK* dsk);
     DSK* getDisk(u8 drive); // 0=A 1=B
+
+	void setSnaData(SNA_FDC* sna);
+	void getSnaData(SNA_FDC* sna);
 
     void printBuffer(); // para pruebas
 };

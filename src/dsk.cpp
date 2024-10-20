@@ -171,8 +171,8 @@ void DSK:: createTrack(std::fstream& dskFile, u8 pista, u8 caras, u8 sectores, u
 
 
 
-// crea un fichero dsk
-void DSK:: create(std::string& fichero, u8 pistas, u8 caras, u8 sectores, u8 sectorSize, 
+// STATIC | crea un fichero dsk
+bool DSK:: create(const std::string& fichero, u8 pistas, u8 caras, u8 sectores, u8 sectorSize, 
 		BYTE fillerByte, BYTE gap, BYTE primerSectorId)
 {
 	std::fstream dskFile(fichero, std::ios::out | std::ios::binary);
@@ -193,11 +193,13 @@ void DSK:: create(std::string& fichero, u8 pistas, u8 caras, u8 sectores, u8 sec
 		createTrack(dskFile, pista, caras, sectores, sectorSize, fillerByte, gap, primerSectorId);
 	}
 	dskFile.close();
+	return true;
 }
 
 
 // solo se utiliza para los extended
 void DSK:: crearTabla(u8 pistas, u8 caras) {
+	debug_dsk("DSK:: crear tabla posiciones pistas. pistas=%d caras=%d\n", pistas, caras);
 	tablaPosicionesPistas = new i32*[pistas];
 
 	for (u8 p = 0; p < pistas; p++) {
@@ -472,7 +474,13 @@ bool DSK:: existsTrack(u8 track) {
 }
 
 bool DSK:: existsTrackSide(u8 track, u8 side) {
-	return  track < dskHeader.tracks  &&  tablaPosicionesPistas[track][side] != -1;
+	if (dskHeader.isExtended()) {
+		return  track < dskHeader.tracks  &&  tablaPosicionesPistas[track][side] != -1;
+	}
+	else {
+		u32 posTrackSide = track * dskHeader.trackSize * dskHeader.sides + dskHeader.trackSize * side;
+		return (posTrackSide < tamFichero);
+	}
 }
 
 // ?? numero de sector o sector id, solo usada por readTrack, REHACER
@@ -503,11 +511,6 @@ void DSK:: writeByte(BYTE dato) {
 
 //bool DSK:: existsTrackInFile(u8 track, u8 side) {
 //	return tablaPosicionesPistas[track][side] != -1;
-//}
-
-
-//void copiarPista_extended(std::fstream& fin, std::fstream& fout, u16 tamPista) {
-//	copiarBytes(fin, fout, tamPista);
 //}
 
 

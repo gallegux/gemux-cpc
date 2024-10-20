@@ -35,13 +35,14 @@
 #include "tipos.h"
 #include "log.h"
 
-#define MAX_TRACKS 80
-#define MAX_SECTORS 36
-#define DSK_HEADER_LEN 0x100
-#define TRACK_HEADER_LEN 0x100
-#define SECTOR_INFO_LEN 8
-#define SECTOR_INFORMATION_LIST_POS 0x18
-#define TRACK_TABLE_POS 0x34
+
+constexpr u8  MAX_TRACKS                  = 80;
+constexpr u8  MAX_SECTORS                 = 36;
+constexpr u16 DSK_HEADER_LEN              = 0x100;
+constexpr u16 TRACK_HEADER_LEN            = 0x100;
+constexpr u8  SECTOR_INFO_LEN             = 8;
+constexpr u8  SECTOR_INFORMATION_LIST_POS = 0x18;
+constexpr u8  TRACK_TABLE_POS             = 0x34;
 
 // errores en lectura/escritura
 //#define DSK_PROTECTED -4
@@ -50,14 +51,13 @@
 //#define DSK_SIDE_NOT_FOUND -1
 //#define DSK_NOT_VALID_FORMAT -10
 
+constexpr u8 FD_TRACK       = 0;
+constexpr u8 FD_SIDE        = 1;
+constexpr u8 FD_SECTOR_ID   = 2;
+constexpr u8 FD_SECTOR_SIZE = 3;
 
-#define FD_TRACK 0
-#define FD_SIDE 1
-#define FD_SECTOR_ID 2
-#define FD_SECTOR_SIZE 3
 
-
-#define TRACK_BYTES 6250
+constexpr u16 TRACK_BYTES = 6250;
 
 
 // clase que se usa en el proceso de formatear discos
@@ -139,7 +139,7 @@ class T_DskRawTrack
 	T_DskRawTrack();
 	~T_DskRawTrack();
 
-	void addBlockBytes(u8 numBytes, BYTE value);
+	void addBlockBytes(u16 numBytes, BYTE value);
 	void addSector(u8 pista, u8 cara, u8 sector, u8 longSector, BYTE* buffer);
 	bool searchSector(u8 pista, u8 cara, u8 sector);
 	BYTE getByte();
@@ -348,9 +348,13 @@ public:
 	void formatTrack(FormatData *formatData);
 
 	// metodos estaticos
-	static void createTrackSide(std::fstream& dskFile, u8 pista, u8 cara, u8 sectores, u8 sectorSize, BYTE fillerByte, BYTE gap, BYTE primerSectorId);
-	static void createTrack(std::fstream& dskFile, u8 pista, u8 caras, u8 sectores, u8 sectorSize, BYTE fillerByte, BYTE gap, BYTE primerSector);
-	static void create(std::string& f, u8 pistas, u8 sides, u8 sectores, u8 sectorSize, BYTE fillerByte, BYTE gap, BYTE primerSectorId);
+	static void createTrackSide(std::fstream& dskFile, u8 pista, u8 cara, u8 sectores, u8 sectorSize, 
+	                            BYTE fillerByte, BYTE gap, BYTE primerSectorId);
+	static void createTrack(std::fstream& dskFile, u8 pista, u8 caras, u8 sectores, u8 sectorSize, 
+	                        BYTE fillerByte, BYTE gap, BYTE primerSector);
+
+	static bool create(const std::string& f, u8 pistas, u8 caras, u8 sectores, u8 sectorSize, 
+	                   BYTE fillerByte, BYTE gap, BYTE primerSectorId);
 
 };
 

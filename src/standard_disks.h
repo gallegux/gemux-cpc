@@ -24,8 +24,34 @@
 
 #include <fstream>
 
-static void createStandardData(std::string& f); // 40 pistas, 9 sectores, 1 cara
-static void createStandardSystem(std::string& f); // 40 pistas, 9 sectores, 1 cara
+static void createStandardData(const std::string& f); // 40 pistas, 9 sectores, 1 cara
+static void createStandardSystem(const std::string& f); // 40 pistas, 9 sectores, 1 cara
+static void createStandardUnformatted(const std::string& f); // 40 pistas, 9 sectores, 1 cara
 
-static void create35Data(std::string& f); // 80 pistas, 9 sectores, 2 caras
-static void create35System(std::string& f); // 80 pistas, 9 sectores, 2 caras
+static void create35Data(const std::string& f); // 80 pistas, 2 caras, 9 sectores, 512k
+static void create35Unformatted(const std::string& f); // 80 pistas, 2 caras, 9 sectores, 512k
+
+
+//typedef struct {
+//	std::string description;
+//	void (*createDiskFunction)(const std::string& file);
+//} DSK_Standard;
+
+
+typedef struct {
+	std::string description;
+	u8 tracks;
+	u8 sides;
+	u8 sectors;
+	u8 size;     // 1 = 256; 2 = 512;  real size = 0x40 << size
+	BYTE fillerByte;
+	BYTE gap;
+	BYTE firstSector;
+	//u8 info;	// 1 solo amsdos, 2 parados, 4 romdos
+} DSK_FORMAT;
+
+
+constexpr u8 NUMBER_DSK_FORMATS = 3;
+
+extern const DSK_FORMAT DSK_FORMATS[NUMBER_DSK_FORMATS];
+

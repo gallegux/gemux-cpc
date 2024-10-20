@@ -22,27 +22,39 @@
 |  the author and providing a link to the original repository.               |
 |___________________________________________________________________________*/
 
+#include <string>
 #include <fstream>
 #include "dsk.h"
 #include "standard_disks.h"
 
 
-static void createStandardData(std::string& f) {; // 40 pistas, 9 sectores, 1 cara
+
+
+
+static void createStandardData(const std::string& f) {; // 40 pistas, 9 sectores, 1 cara
 	DSK::create(f, 40, 1, 9, 2, 0xE5, 0x4E, 0xC1);
 }
 
 
-static void createStandardSystem(std::string& f) {; // 40 pistas, 9 sectores, 1 cara
+static void createStandardSystem(const std::string& f) {; // 40 pistas, 9 sectores, 1 cara
 	DSK::create(f, 40, 1, 9, 2, 0xE5, 0x4E, 0x41);
 }
 
 
-static void create35Data(std::string& f) {; // 80 pistas, 9 sectores, 2 caras
+static void create35Data(const std::string& f) {; // 80 pistas, 9 sectores, 2 caras
 	DSK::create(f, 80, 2, 9, 2, 0xE5, 0x4E, 0xC1);
 }
 
 
-static void create35System(std::string& f) { // 80 pistas, 9 sectores, 2 caras
+static void create35System(const std::string& f) { // 80 pistas, 9 sectores, 2 caras
 	DSK::create(f, 80, 2, 9, 2, 0xE5, 0x4E, 0x41);
 }
 
+
+const DSK_FORMAT DSK_FORMATS[NUMBER_DSK_FORMATS] = {
+	{ "3\" data format (178 KB)"   , 40, 1, 9, 2, 0xE5, 0x4E, 0xC1},
+	{ "3\" system format (169 KB)" , 40, 1, 9, 2, 0xE5, 0x4E, 0xC1},
+	{ "3\" unformatted"            , 40, 1, 9, 2, 0, 0, 0}
+//	{ "3.5\" single side (716 Kb)" , 80, 1, 9, 2, 0xE5, 0x4E, 0xC1},
+//	{ "3.5\" double side (356 Kb)" , 80, 2, 9, 2, 0xE5, 0x4E, 0xC1}
+};

@@ -23,11 +23,12 @@
 |___________________________________________________________________________*/
 
 #include <string>
+#include <filesystem>
 #include "log.h"
 #include "dsk.h"
 #include "disc_drive.h"
 #include "fdc.h"
-#include "osd.h"
+//#include "osd.h"
 
 
 std::string UNIDADES[] = {"A", "B"};
@@ -49,6 +50,12 @@ DiscDrive::~DiscDrive() {
 }
 
 
+//bool DiscDrive:: insert(std::filesystem::path& fichero) {
+//	std::string d { fichero.string() };
+//	return insert(d);
+//}
+
+
 bool DiscDrive:: insert(std::string& fichero) {
     eject();
     
@@ -58,12 +65,12 @@ bool DiscDrive:: insert(std::string& fichero) {
         fdc->setDisk(unidad, disco);
         debug_disquetera("DRIVE:: [%d] insert: %s\n", unidad, fichero.c_str());
 
-        osd_setMessage("Drive " + UNIDADES[unidad] + ": " + fichero + " inserted");
+        //osd_setMessage("Drive " + UNIDADES[unidad] + ": " + fichero + " inserted");
     }
     else {
         delete disco;
         debug_disquetera("DRIVE:: [%d] insert -> fichero no valido\n", unidad);
-        osd_setMessage("Drive " + UNIDADES[unidad] + ": Not valid file");
+        //osd_setMessage("Drive " + UNIDADES[unidad] + ": Not valid file");
     }
     return ok;
 }
@@ -72,7 +79,7 @@ bool DiscDrive:: insert(std::string& fichero) {
 void DiscDrive:: eject() {
     if (disco != nullptr) {
         debug_disquetera("DRIVE:: [%d] - eject\n", unidad);
-        osd_setMessage("Drive " + UNIDADES[unidad] + ": Ejected");
+        //osd_setMessage("Drive " + UNIDADES[unidad] + ": Ejected");
         fdc->setDisk(unidad, nullptr);
         disco->close();
         delete disco;
@@ -85,7 +92,7 @@ void DiscDrive:: setWriteProtection(bool p) {
     if (disco != nullptr) {
         disco->setProtected(p);
         debug_disquetera("DRIVE:: [%d] proteccion = %d\n", unidad, disco->isProtected());
-        osd_setMessage("Drive " + UNIDADES[unidad] + ": " + PROTECCION[disco->isProtected()]);
+        //osd_setMessage("Drive " + UNIDADES[unidad] + ": " + PROTECCION[disco->isProtected()]);
     }
 }
 

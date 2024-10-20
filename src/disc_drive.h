@@ -25,6 +25,7 @@
 #pragma once
 
 #include <string>
+//#include <filesystem>
 #include "log.h"
 #include "fdc.h"
 #include "dsk.h"
@@ -43,6 +44,7 @@ public:
     DiscDrive(u8 unidad, FDC* fdc);
     ~DiscDrive();
 
+//	bool insert(std::filesystem::path& fichero);
     bool insert(std::string& fichero);
     void eject();
     void setWriteProtection(bool p);
