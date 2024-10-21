@@ -36,6 +36,9 @@
 #include "log.h"
 
 
+#define BYTES_SECTOR(x) (0x0080 << x)
+
+
 constexpr u8  MAX_TRACKS                  = 80;
 constexpr u8  MAX_SECTORS                 = 36;
 constexpr u16 DSK_HEADER_LEN              = 0x100;
@@ -55,7 +58,6 @@ constexpr u8 FD_TRACK       = 0;
 constexpr u8 FD_SIDE        = 1;
 constexpr u8 FD_SECTOR_ID   = 2;
 constexpr u8 FD_SECTOR_SIZE = 3;
-
 
 constexpr u16 TRACK_BYTES = 6250;
 

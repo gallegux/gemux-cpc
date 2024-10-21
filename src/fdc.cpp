@@ -30,6 +30,7 @@
 #include "log.h"
 #include "dsk.h"
 #include "util.h"
+#include "sna.h"
 
 #include "breakpoint.h"
 
@@ -572,7 +573,7 @@ void FDC:: writeData_execution(BYTE dato) {
         //printBuffer();
         debug_fdc("\nFDC:: writeSector pista=%d cabezal=%d sector=%02X\n", p_pista, p_cabezal, p_sector);
         //disk[p_unidad]->writeSector(p_pista, p_cabezal, p_sector, buffer);
-        currentDsk->writeSectorData(p_tamSector << 8, buffer);
+        currentDsk->writeSectorData(BYTES_SECTOR(p_tamSector), buffer);
         delete buffer;
         bytesCopiados = true;
         fase = FASE_RESULTADO;
@@ -623,11 +624,20 @@ void FDC:: readData() {
                     //debug_fdc("FDC:: readData() sector encontrado\n");
                     u8 numSectores = p_ultSectorPista - p_sector + 1;
                     //debug_fdc("FDC:: readData() num sectores: %d\n", numSectores);
-                    u16 bufferSize = (p_tamSector << 8) * numSectores;
+                    u16 bufferSize = BYTES_SECTOR(p_tamSector) * numSectores;
+					debug_fdc("FDC:: read_data()  n_sectores=%d buffer_size=%d  tam_sector=%02X\n", 
+								numSectores, bufferSize, p_tamSector);
                     puntBuffer = buffer = new BYTE[bufferSize];
                     //debug_fdc("FDC:: readData() buffer_size=%d\n", bufferSize);
                     finBuffer = buffer + bufferSize;
-                    currentDsk->readSectorData(bufferSize, buffer); // obtener datos
+                    //currentDsk->readSectorData(bufferSize, buffer); // obtener datos
+					currentDsk->readSectorData(bufferSize, buffer);
+					{
+						for (u16 i = 0, cont = 0; i < bufferSize; i++) {
+							printf("%02X ", buffer[i]);
+							if (++cont % 48 == 0) printf("\n");
+						}
+					}
                     // comprobamos que tenemos los datos que queremos
                     //debug_fdc("DATOS SECTOR DISCO: ");
                     //printBuffer();
@@ -658,7 +668,7 @@ void FDC:: readData() {
         if (p_pista == 0xFF) regEstado2 |= R2_BC_BAD_CYLINDER;
     }
     regEstado0 |= p_unidad;
-    setOutputBytes_RS012_CHRN(p_pista, p_cabezal, p_sector, p_tamSector);
+    setOutputBytes_RS012_CHRN(p_pista, p_cabezal, p_ultSectorPista, p_tamSector);
 }
 
 void FDC:: readDeletedData() {
@@ -738,13 +748,12 @@ void FDC:: senseInterruptStaus() {
 void FDC:: readId() {
     debug_fdc("FDC:: ---------- readId() ----------\n");
     getDriveHead();
-    //debug_fdc("FDC:: unidad=%d cabezal=%d\n", p_unidad, p_cabezal);
 
     fase = FASE_RESULTADO;
     //f_fdcBusy = true;
 
     if (currentDsk == nullptr) { // no hay disco
-        debug_fdc("FDC:: readId() no hay disco\n");
+        debug_fdc("FDC:: readId() no hay disco\n"); FLUSH;
         regEstado0 = 0x48; // comando interrumpido + not ready
         regEstado1 = regEstado2 = 0;
         setOutputBytes_RS012_CHRN(0,0,0,0);
@@ -756,13 +765,13 @@ void FDC:: readId() {
     //    setOutputBytes_RS012_CHRN(0,0,0,0);
     //}
     else if (!currentDsk->existsTrackSide(p_pista, p_cabezal)) { // pista no encontrada
-        debug_fdc("FDC:: readId() pista no existe\n");
+        debug_fdc("FDC:: readId() pista no existe\n"); FLUSH;
         regEstado0 = R0_IC_COMANDO_INTERRUMPIDO;
         regEstado1 = R1_MA_MISSING_ADDRESS_MARK;
         setOutputBytes_RS012_CHRN(0,0,0,0);
     }
     else {
-        debug_fdc("FDC:: readId() obtener\n");
+        debug_fdc("FDC:: readId() obtener\n"); FLUSH;
         currentSide[p_unidad] = p_cabezal;
         if (p_cabezal == 1 && currentDsk->getSides() == 0) {
             p_cabezal = currentSide[p_unidad] = 0;
@@ -783,7 +792,7 @@ void FDC:: readId() {
         regEstado1 = 0;
         setOutputBytes_RS012_CHRN(p_pista, p_cabezal, sectorInfo.sectorId, p_tamSector);
     }
-
+	debug_fdc("FDC:: fin readId\n");
 }
 
 
@@ -885,7 +894,7 @@ void FDC:: scanEqual() {
         regEstado2 = R2_SH_SCAN_EQUAL_HIT;
 
         contador = 0;
-        maxContador = sectorInfo.sectorSize << 8;
+        maxContador = BYTES_SECTOR(sectorInfo.sectorSize);
         fase = FASE_EJECUCION;
     }
     else {
@@ -936,3 +945,15 @@ DSK* FDC:: getDisk(u8 drive) {
         return nullptr;
 }
 
+
+void FDC:: setSnaData(SNA_FDC* sna) {
+	led = sna->led;
+
+	memcpy(currentTrack, sna->currentTracks, MAX_DRIVES);
+}
+
+void FDC:: getSnaData(SNA_FDC* sna) {
+	sna->led = led;
+
+	memcpy(sna->currentTracks, currentTrack, MAX_DRIVES);
+}

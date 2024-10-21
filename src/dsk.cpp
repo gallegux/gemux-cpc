@@ -155,7 +155,7 @@ void DSK:: createTrackSide(std::fstream& dskFile, u8 pista, u8 cara, u8 sectores
 	for (u8 sector = 0; sector < sectores; sector++) {
 		//debug_dsk("writing empty sector... %d  %d\n", sector, sectorSize);
 		//rellenar(dskFile, sectorSize << 8, fillerByte);
-		rellenar(dskFile, 0x80 << sectorSize /*<< 8*/, fillerByte);
+		rellenar(dskFile, BYTES_SECTOR(sectorSize), fillerByte);
 		// en winape, cuando se formatea un sector con sectorSize=4 el tamanio es 8192bytes
 	}
 }
@@ -178,7 +178,7 @@ bool DSK:: create(const std::string& fichero, u8 pistas, u8 caras, u8 sectores, 
 	std::fstream dskFile(fichero, std::ios::out | std::ios::binary);
 
 	T_DskHeader dskHeader {pistas, caras};
-	dskHeader.trackSize = sectores * (sectorSize << 8);
+	dskHeader.trackSize = sectores * BYTES_SECTOR(sectorSize);
 	//dskHeader.calcTrackSize(sectores, sectorSize);
 	dskHeader.write(dskFile);
 	
@@ -430,7 +430,7 @@ bool DSK:: getSectorInfo_ID_standard(u8 track, u8 side, u8 sectorId, T_SectorInf
 	fichero.seekg(posSectorInfo, std::ios::beg);  // posSectorInfo ahora tiene la pos de la pista
 	T_DskTrackInfo trackInfo;
 	trackInfo.load(fichero);
-	u16 sectorSize = 0x0080 << trackInfo.sectorSize;
+	u16 sectorSize = BYTES_SECTOR(trackInfo.sectorSize);
 	
 	posSectorInfo += sizeof(T_DskTrackInfo); // ahora apunta al primer sector
 	posSectorData += TRACK_HEADER_LEN; // apuntando a los datos del primer sector
@@ -520,7 +520,7 @@ u16 copiarPista_standard(std::fstream& fin, std::fstream& fout) {
 	posSector0 += TRACK_HEADER_LEN;
 	T_DskTrackInfo trackInfo;
 	trackInfo.load(fin);
-	u16 tamDatosSector = (0x0080 << trackInfo.sectorSize);
+	u16 tamDatosSector = BYTES_SECTOR(trackInfo.sectorSize);
 
 	// escribir el T_TrackInfo
 	trackInfo.write(fout);
@@ -531,7 +531,7 @@ u16 copiarPista_standard(std::fstream& fin, std::fstream& fout) {
 	// calcular el nº total de bytes de los sectores, la posicion de cada uno y su tamano
 	for (u8 sector = 0; sector < trackInfo.sectors; sector++) {
 		sectorInfo.load(fin);
-		tamSector[sector] = sectorInfo.dataLength = 0x0080 << sectorInfo.sectorSize;
+		tamSector[sector] = sectorInfo.dataLength = BYTES_SECTOR(sectorInfo.sectorSize);
 		sectorInfo.write(fout);
 		posSector[sector] = posSector0 + sector * tamDatosSector;
 		tamPista += sectorInfo.dataLength;
@@ -568,7 +568,7 @@ void formatearPista(std::fstream& fout, FormatData* formatData) {
 		sectorInfo.side = formatData->getSide(s);
 		sectorInfo.sectorId = formatData->getSectorId(s);
 		sectorInfo.sectorSize = formatData->getSectorSize(s);
-		sectorInfo.dataLength = 0x0080 << formatData->getSectorSize(s);
+		sectorInfo.dataLength = BYTES_SECTOR(formatData->getSectorSize(s));
 		sectorInfo.write(fout);
 		//sectorInfo.print();
 	}
