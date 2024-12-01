@@ -1,0 +1,5 @@
+msys64
+build
+.vscode
+src/compilation_options.h
+src/target.h

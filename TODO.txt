@@ -1,0 +1,30 @@
+----------------------------------------------------
+NO FUNCIONA
+----------------------------------------------------
+
+- la opcion ReadTrack con discology, la llamada ReadID se 
+ejecuta indefinidamente. en rvm se deja de llamar a ReadID cuando el 
+codigo del sector ya se habia obtenido.
+los parametros que se envian son los mismos, y los resultados de los comandos tambien
+
+- Algunos juegos no empiezan al terminar de cargar
+
+-----
+FALTA
+-----
+- sonido
+- CRTC
+- led lectura/escritura disco
+- contador o cronometro de cintas
+
+
+-------
+CAMBIAR
+-------
+- DEFINICIONES_PALETA_MONITOR a algo más fácil de entender sin juntar datos en un byte
+
+
+------
+AFINAR
+------
+El tiempo de los ciclos (main.cpp)

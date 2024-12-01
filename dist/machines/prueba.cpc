@@ -1,0 +1,8 @@
+upper_rom.0=roms/BASIC_6128_UK.rom
+lower_rom=roms/OS_6128_UK.rom
+monitor_scanlines=1
+monitor_palette2=3
+monitor_palette1=0
+ram=1
+upper_rom.7=roms/AMSDOS.rom
+cpc_type=2

@@ -1,0 +1,6 @@
+#pragma once
+
+
+#define TARGET_PC 1
+#define _TARGET_WINDOWS 1
+//#define TARGET_LILYGO 1

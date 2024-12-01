@@ -1,0 +1,1877 @@
+From: <Saved by Blink>
+Snapshot-Content-Location: https://wiki.libsdl.org/SDL2/SDL_ScancodeAndKeycode
+Subject: SDL2/SDL_ScancodeAndKeycode - SDL Wiki
+Date: Sun, 3 Nov 2024 21:45:54 +0100
+MIME-Version: 1.0
+Content-Type: multipart/related;
+	type="text/html";
+	boundary="----MultipartBoundary--4L5IOA8va70z9FNUz5otqt1DWDlIArFUo4wYUXUTsQ----"
+
+
+------MultipartBoundary--4L5IOA8va70z9FNUz5otqt1DWDlIArFUo4wYUXUTsQ----
+Content-Type: text/html
+Content-ID: <frame-70E21FAF67E6BCD50EE8F49CC12CA48A@mhtml.blink>
+Content-Transfer-Encoding: quoted-printable
+Content-Location: https://wiki.libsdl.org/SDL2/SDL_ScancodeAndKeycode
+
+<!DOCTYPE html><html><head><meta http-equiv=3D"Content-Type" content=3D"tex=
+t/html; charset=3DUTF-8">
+
+<meta name=3D"viewport" content=3D"width=3Ddevice-width, initial-scale=3D1"=
+>
+<title>SDL2/SDL_ScancodeAndKeycode - SDL Wiki</title>
+<link rel=3D"icon" type=3D"image/ico" href=3D"https://wiki.libsdl.org/stati=
+c_files/favicon.ico">
+<link rel=3D"alternate" type=3D"application/atom+xml" title=3D"recent chang=
+es" href=3D"https://github.com/libsdl-org/sdlwiki/commits/main.atom">
+<link rel=3D"stylesheet" href=3D"https://wiki.libsdl.org/static_files/ghwik=
+ipp.css">
+<meta name=3D"color-scheme" content=3D"dark light">
+<meta name=3D"twitter:card" content=3D"summary">
+<meta name=3D"twitter:site" content=3D"@sdl_commits">
+<meta name=3D"twitter:image" content=3D"https://wiki.libsdl.org/static_file=
+s/logo.png">
+<meta property=3D"og:image" content=3D"https://wiki.libsdl.org/static_files=
+/logo.png">
+<meta property=3D"og:type" content=3D"website">
+<meta name=3D"twitter:url" content=3D"/SDL2/SDL_ScancodeAndKeycode">
+<meta property=3D"og:url" content=3D"/SDL2/SDL_ScancodeAndKeycode">
+<meta name=3D"twitter:title" content=3D"SDL2/SDL_ScancodeAndKeycode">
+<meta property=3D"og:title" content=3D"SDL2/SDL_ScancodeAndKeycode">
+<meta name=3D"twitter:description" content=3D"The Simple Directmedia Layer =
+Wiki">
+<meta property=3D"og:description" content=3D"The Simple Directmedia Layer W=
+iki">
+
+<link rel=3D"stylesheet" href=3D"https://wiki.libsdl.org/static_files/pando=
+c.css">
+</head><body data-new-gr-c-s-check-loaded=3D"14.1205.0" data-gr-ext-install=
+ed=3D"">
+
+<!--<p><div class=3D"alertBox"><font color=3D"#ff0000"><center>
+This is new wiki software and old wiki content. It's a work in progress!<br=
+/>
+Here's the <a href=3D"https://discourse.libsdl.org/t/wiki-libsdl-org-migrat=
+ion/31085">explanation</a>.
+<br/>Be gentle,
+<a href=3D"https://github.com/libsdl-org/ghwikipp/issues/new">report bugs</=
+a>,
+<a href=3D"https://github.com/libsdl-org/sdlwiki/issues/new?title=3DFeedbac=
+k%20on%20page%20SDL2/SDL_ScancodeAndKeycode">leave feedback on pages</a>,
+or just <a href=3D'/SDL2/SDL_ScancodeAndKeycode/edit'>edit</a> them yoursel=
+f! Thanks!
+</center></font></div></p>-->
+
+<div class=3D"wikitopbanner">
+<a href=3D"https://wiki.libsdl.org/" style=3D"color: inherit; text-decorati=
+on: inherit;"><font size=3D"+3">SDL Wiki</font></a>
+</div>
+
+
+
+<h2 class=3D"anchorText" id=3D"draft">Draft<a href=3D"https://wiki.libsdl.o=
+rg/SDL2/SDL_ScancodeAndKeycode#draft"><img src=3D"https://wiki.libsdl.org/s=
+tatic_files/link.svg" class=3D"anchorImage" width=3D"16" height=3D"16" alt=
+=3D""></a></h2>
+<p><strong>THIS PAGE IS A WORK IN PROGRESS</strong> ... Please make edits t=
+o this page to improve it!</p>
+<h1 id=3D"sdl_scancode_and_sdl_keycode">SDL_Scancode and SDL_Keycode</h1>
+<p>Enumerations of the SDL physical (scancode) and virtual (keycode) key re=
+presentations.</p>
+<h2 class=3D"anchorText" id=3D"values">Values<a href=3D"https://wiki.libsdl=
+.org/SDL2/SDL_ScancodeAndKeycode#values"><img src=3D"https://wiki.libsdl.or=
+g/static_files/link.svg" class=3D"anchorImage" width=3D"16" height=3D"16" a=
+lt=3D""></a></h2>
+<table>
+<tbody>
+<tr class=3D"odd">
+<td><p>&lt;bgcolor=3D"#EDEDED"&gt;<em>Key Name</em></p></td>
+<td><p>&lt;bgcolor=3D"#EDEDED"&gt;<em>SDL_Scancode Value</em></p></td>
+<td><p>&lt;bgcolor=3D"#EDEDED"&gt;<em>SDL_Keycode Value</em></p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>0</strong>"</p></td>
+<td><p>SDL_SCANCODE_0</p></td>
+<td><p>SDLK_0</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>1</strong>"</p></td>
+<td><p>SDL_SCANCODE_1</p></td>
+<td><p>SDLK_1</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>2</strong>"</p></td>
+<td><p>SDL_SCANCODE_2</p></td>
+<td><p>SDLK_2</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>3</strong>"</p></td>
+<td><p>SDL_SCANCODE_3</p></td>
+<td><p>SDLK_3</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>4</strong>"</p></td>
+<td><p>SDL_SCANCODE_4</p></td>
+<td><p>SDLK_4</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>5</strong>"</p></td>
+<td><p>SDL_SCANCODE_5</p></td>
+<td><p>SDLK_5</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>6</strong>"</p></td>
+<td><p>SDL_SCANCODE_6</p></td>
+<td><p>SDLK_6</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>7</strong>"</p></td>
+<td><p>SDL_SCANCODE_7</p></td>
+<td><p>SDLK_7</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>8</strong>"</p></td>
+<td><p>SDL_SCANCODE_8</p></td>
+<td><p>SDLK_8</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>9</strong>"</p></td>
+<td><p>SDL_SCANCODE_9</p></td>
+<td><p>SDLK_9</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>A</strong>"</p></td>
+<td><p>SDL_SCANCODE_A</p></td>
+<td><p>SDLK_a</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>AC Back</strong>" (the Back key (application control keypad=
+))</p></td>
+<td><p>SDL_SCANCODE_AC_BACK</p></td>
+<td><p>SDLK_AC_BACK</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>AC Bookmarks</strong>" (the Bookmarks key (application cont=
+rol keypad))</p></td>
+<td><p>SDL_SCANCODE_AC_BOOKMARKS</p></td>
+<td><p>SDLK_AC_BOOKMARKS</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>AC Forward</strong>" (the Forward key (application control =
+keypad))</p></td>
+<td><p>SDL_SCANCODE_AC_FORWARD</p></td>
+<td><p>SDLK_AC_FORWARD</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>AC Home</strong>" (the Home key (application control keypad=
+))</p></td>
+<td><p>SDL_SCANCODE_AC_HOME</p></td>
+<td><p>SDLK_AC_HOME</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>AC Refresh</strong>" (the Refresh key (application control =
+keypad))</p></td>
+<td><p>SDL_SCANCODE_AC_REFRESH</p></td>
+<td><p>SDLK_AC_REFRESH</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>AC Search</strong>" (the Search key (application control ke=
+ypad))</p></td>
+<td><p>SDL_SCANCODE_AC_SEARCH</p></td>
+<td><p>SDLK_AC_SEARCH</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>AC Stop</strong>" (the Stop key (application control keypad=
+))</p></td>
+<td><p>SDL_SCANCODE_AC_STOP</p></td>
+<td><p>SDLK_AC_STOP</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>Again</strong>" (the Again key (Redo))</p></td>
+<td><p>SDL_SCANCODE_AGAIN</p></td>
+<td><p>SDLK_AGAIN</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>AltErase</strong>" (Erase-Eaze)</p></td>
+<td><p>SDL_SCANCODE_ALTERASE</p></td>
+<td><p>SDLK_ALTERASE</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>'</strong>"</p></td>
+<td><p>SDL_SCANCODE_APOSTROPHE</p></td>
+<td><p>SDLK_QUOTE</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>Application</strong>" (the Application / Compose / Context =
+Menu (Windows) key)</p></td>
+<td><p>SDL_SCANCODE_APPLICATION</p></td>
+<td><p>SDLK_APPLICATION</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>AudioMute</strong>" (the Mute volume key)</p></td>
+<td><p>SDL_SCANCODE_AUDIOMUTE</p></td>
+<td><p>SDLK_AUDIOMUTE</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>AudioNext</strong>" (the Next Track media key)</p></td>
+<td><p>SDL_SCANCODE_AUDIONEXT</p></td>
+<td><p>SDLK_AUDIONEXT</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>AudioPlay</strong>" (the Play media key)</p></td>
+<td><p>SDL_SCANCODE_AUDIOPLAY</p></td>
+<td><p>SDLK_AUDIOPLAY</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>AudioPrev</strong>" (the Previous Track media key)</p></td>
+<td><p>SDL_SCANCODE_AUDIOPREV</p></td>
+<td><p>SDLK_AUDIOPREV</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>AudioStop</strong>" (the Stop media key)</p></td>
+<td><p>SDL_SCANCODE_AUDIOSTOP</p></td>
+<td><p>SDLK_AUDIOSTOP</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>B</strong>"</p></td>
+<td><p>SDL_SCANCODE_B</p></td>
+<td><p>SDLK_b</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>\</strong>" (Located at the lower left of the return key on=
+ ISO keyboards and at the right end of the QWERTY row on ANSI keyboards. Pr=
+oduces REVERSE SOLIDUS (backslash) and VERTICAL LINE in a US layout, REVERS=
+E SOLIDUS and VERTICAL LINE in a UK Mac layout, NUMBER SIGN and TILDE in a =
+UK Windows layout, DOLLAR SIGN and POUND SIGN in a Swiss German layout, NUM=
+BER SIGN and APOSTROPHE in a German layout, GRAVE ACCENT and POUND SIGN in =
+a French Mac layout, and ASTERISK and MICRO SIGN in a French Windows layout=
+.)</p></td>
+<td><p>SDL_SCANCODE_BACKSLASH</p></td>
+<td><p>SDLK_BACKSLASH</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>Backspace</strong>"</p></td>
+<td><p>SDL_SCANCODE_BACKSPACE</p></td>
+<td><p>SDLK_BACKSPACE</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>BrightnessDown</strong>" (the Brightness Down key)</p></td>
+<td><p>SDL_SCANCODE_BRIGHTNESSDOWN</p></td>
+<td><p>SDLK_BRIGHTNESSDOWN</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>BrightnessUp</strong>" (the Brightness Up key)</p></td>
+<td><p>SDL_SCANCODE_BRIGHTNESSUP</p></td>
+<td><p>SDLK_BRIGHTNESSUP</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>C</strong>"</p></td>
+<td><p>SDL_SCANCODE_C</p></td>
+<td><p>SDLK_c</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>Calculator</strong>" (the Calculator key)</p></td>
+<td><p>SDL_SCANCODE_CALCULATOR</p></td>
+<td><p>SDLK_CALCULATOR</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>Cancel</strong>"</p></td>
+<td><p>SDL_SCANCODE_CANCEL</p></td>
+<td><p>SDLK_CANCEL</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>CapsLock</strong>"</p></td>
+<td><p>SDL_SCANCODE_CAPSLOCK</p></td>
+<td><p>SDLK_CAPSLOCK</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>Clear</strong>"</p></td>
+<td><p>SDL_SCANCODE_CLEAR</p></td>
+<td><p>SDLK_CLEAR</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>Clear / Again</strong>"</p></td>
+<td><p>SDL_SCANCODE_CLEARAGAIN</p></td>
+<td><p>SDLK_CLEARAGAIN</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>,</strong>"</p></td>
+<td><p>SDL_SCANCODE_COMMA</p></td>
+<td><p>SDLK_COMMA</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>Computer</strong>" (the My Computer key)</p></td>
+<td><p>SDL_SCANCODE_COMPUTER</p></td>
+<td><p>SDLK_COMPUTER</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>Copy</strong>"</p></td>
+<td><p>SDL_SCANCODE_COPY</p></td>
+<td><p>SDLK_COPY</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>CrSel</strong>"</p></td>
+<td><p>SDL_SCANCODE_CRSEL</p></td>
+<td><p>SDLK_CRSEL</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>CurrencySubUnit</strong>" (the Currency Subunit key)</p></t=
+d>
+<td><p>SDL_SCANCODE_CURRENCYSUBUNIT</p></td>
+<td><p>SDLK_CURRENCYSUBUNIT</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>CurrencyUnit</strong>" (the Currency Unit key)</p></td>
+<td><p>SDL_SCANCODE_CURRENCYUNIT</p></td>
+<td><p>SDLK_CURRENCYUNIT</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>Cut</strong>"</p></td>
+<td><p>SDL_SCANCODE_CUT</p></td>
+<td><p>SDLK_CUT</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>D</strong>"</p></td>
+<td><p>SDL_SCANCODE_D</p></td>
+<td><p>SDLK_d</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>DecimalSeparator</strong>" (the Decimal Separator key)</p><=
+/td>
+<td><p>SDL_SCANCODE_DECIMALSEPARATOR</p></td>
+<td><p>SDLK_DECIMALSEPARATOR</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>Delete</strong>"</p></td>
+<td><p>SDL_SCANCODE_DELETE</p></td>
+<td><p>SDLK_DELETE</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>DisplaySwitch</strong>" (display mirroring/dual display swi=
+tch, video mode switch)</p></td>
+<td><p>SDL_SCANCODE_DISPLAYSWITCH</p></td>
+<td><p>SDLK_DISPLAYSWITCH</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>Down</strong>" (the Down arrow key (navigation keypad))</p>=
+</td>
+<td><p>SDL_SCANCODE_DOWN</p></td>
+<td><p>SDLK_DOWN</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>E</strong>"</p></td>
+<td><p>SDL_SCANCODE_E</p></td>
+<td><p>SDLK_e</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>Eject</strong>" (the Eject key)</p></td>
+<td><p>SDL_SCANCODE_EJECT</p></td>
+<td><p>SDLK_EJECT</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>End</strong>"</p></td>
+<td><p>SDL_SCANCODE_END</p></td>
+<td><p>SDLK_END</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>=3D</strong>"</p></td>
+<td><p>SDL_SCANCODE_EQUALS</p></td>
+<td><p>SDLK_EQUALS</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>Escape</strong>" (the Esc key)</p></td>
+<td><p>SDL_SCANCODE_ESCAPE</p></td>
+<td><p>SDLK_ESCAPE</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>Execute</strong>"</p></td>
+<td><p>SDL_SCANCODE_EXECUTE</p></td>
+<td><p>SDLK_EXECUTE</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>ExSel</strong>"</p></td>
+<td><p>SDL_SCANCODE_EXSEL</p></td>
+<td><p>SDLK_EXSEL</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>F</strong>"</p></td>
+<td><p>SDL_SCANCODE_F</p></td>
+<td><p>SDLK_f</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>F1</strong>"</p></td>
+<td><p>SDL_SCANCODE_F1</p></td>
+<td><p>SDLK_F1</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>F10</strong>"</p></td>
+<td><p>SDL_SCANCODE_F10</p></td>
+<td><p>SDLK_F10</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>F11</strong>"</p></td>
+<td><p>SDL_SCANCODE_F11</p></td>
+<td><p>SDLK_F11</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>F12</strong>"</p></td>
+<td><p>SDL_SCANCODE_F12</p></td>
+<td><p>SDLK_F12</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>F13</strong>"</p></td>
+<td><p>SDL_SCANCODE_F13</p></td>
+<td><p>SDLK_F13</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>F14</strong>"</p></td>
+<td><p>SDL_SCANCODE_F14</p></td>
+<td><p>SDLK_F14</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>F15</strong>"</p></td>
+<td><p>SDL_SCANCODE_F15</p></td>
+<td><p>SDLK_F15</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>F16</strong>"</p></td>
+<td><p>SDL_SCANCODE_F16</p></td>
+<td><p>SDLK_F16</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>F17</strong>"</p></td>
+<td><p>SDL_SCANCODE_F17</p></td>
+<td><p>SDLK_F17</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>F18</strong>"</p></td>
+<td><p>SDL_SCANCODE_F18</p></td>
+<td><p>SDLK_F18</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>F19</strong>"</p></td>
+<td><p>SDL_SCANCODE_F19</p></td>
+<td><p>SDLK_F19</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>F2</strong>"</p></td>
+<td><p>SDL_SCANCODE_F2</p></td>
+<td><p>SDLK_F2</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>F20</strong>"</p></td>
+<td><p>SDL_SCANCODE_F20</p></td>
+<td><p>SDLK_F20</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>F21</strong>"</p></td>
+<td><p>SDL_SCANCODE_F21</p></td>
+<td><p>SDLK_F21</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>F22</strong>"</p></td>
+<td><p>SDL_SCANCODE_F22</p></td>
+<td><p>SDLK_F22</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>F23</strong>"</p></td>
+<td><p>SDL_SCANCODE_F23</p></td>
+<td><p>SDLK_F23</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>F24</strong>"</p></td>
+<td><p>SDL_SCANCODE_F24</p></td>
+<td><p>SDLK_F24</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>F3</strong>"</p></td>
+<td><p>SDL_SCANCODE_F3</p></td>
+<td><p>SDLK_F3</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>F4</strong>"</p></td>
+<td><p>SDL_SCANCODE_F4</p></td>
+<td><p>SDLK_F4</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>F5</strong>"</p></td>
+<td><p>SDL_SCANCODE_F5</p></td>
+<td><p>SDLK_F5</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>F6</strong>"</p></td>
+<td><p>SDL_SCANCODE_F6</p></td>
+<td><p>SDLK_F6</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>F7</strong>"</p></td>
+<td><p>SDL_SCANCODE_F7</p></td>
+<td><p>SDLK_F7</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>F8</strong>"</p></td>
+<td><p>SDL_SCANCODE_F8</p></td>
+<td><p>SDLK_F8</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>F9</strong>"</p></td>
+<td><p>SDL_SCANCODE_F9</p></td>
+<td><p>SDLK_F9</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>Find</strong>"</p></td>
+<td><p>SDL_SCANCODE_FIND</p></td>
+<td><p>SDLK_FIND</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>G</strong>"</p></td>
+<td><p>SDL_SCANCODE_G</p></td>
+<td><p>SDLK_g</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>`</strong>" (Located in the top left corner (on both ANSI a=
+nd ISO keyboards). Produces GRAVE ACCENT and TILDE in a US Windows layout a=
+nd in US and UK Mac layouts on ANSI keyboards, GRAVE ACCENT and NOT SIGN in=
+ a UK Windows layout, SECTION SIGN and PLUS-MINUS SIGN in US and UK Mac lay=
+outs on ISO keyboards, SECTION SIGN and DEGREE SIGN in a Swiss German layou=
+t (Mac: only on ISO keyboards), CIRCUMFLEX ACCENT and DEGREE SIGN in a Germ=
+an layout (Mac: only on ISO keyboards), SUPERSCRIPT TWO and TILDE in a Fren=
+ch Windows layout, COMMERCIAL AT and NUMBER SIGN in a French Mac layout on =
+ISO keyboards, and LESS-THAN SIGN and GREATER-THAN SIGN in a Swiss German, =
+German, or French Mac layout on ANSI keyboards.)</p></td>
+<td><p>SDL_SCANCODE_GRAVE</p></td>
+<td><p>SDLK_BACKQUOTE</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>H</strong>"</p></td>
+<td><p>SDL_SCANCODE_H</p></td>
+<td><p>SDLK_h</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>Help</strong>"</p></td>
+<td><p>SDL_SCANCODE_HELP</p></td>
+<td><p>SDLK_HELP</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>Home</strong>"</p></td>
+<td><p>SDL_SCANCODE_HOME</p></td>
+<td><p>SDLK_HOME</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>I</strong>"</p></td>
+<td><p>SDL_SCANCODE_I</p></td>
+<td><p>SDLK_i</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>Insert</strong>" (insert on PC, help on some Mac keyboards =
+(but does send code 73, not 117))</p></td>
+<td><p>SDL_SCANCODE_INSERT</p></td>
+<td><p>SDLK_INSERT</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>J</strong>"</p></td>
+<td><p>SDL_SCANCODE_J</p></td>
+<td><p>SDLK_j</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>K</strong>"</p></td>
+<td><p>SDL_SCANCODE_K</p></td>
+<td><p>SDLK_k</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>KBDIllumDown</strong>" (the Keyboard Illumination Down key)=
+</p></td>
+<td><p>SDL_SCANCODE_KBDILLUMDOWN</p></td>
+<td><p>SDLK_KBDILLUMDOWN</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>KBDIllumToggle</strong>" (the Keyboard Illumination Toggle =
+key)</p></td>
+<td><p>SDL_SCANCODE_KBDILLUMTOGGLE</p></td>
+<td><p>SDLK_KBDILLUMTOGGLE</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>KBDIllumUp</strong>" (the Keyboard Illumination Up key)</p>=
+</td>
+<td><p>SDL_SCANCODE_KBDILLUMUP</p></td>
+<td><p>SDLK_KBDILLUMUP</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>Keypad 0</strong>" (the 0 key (numeric keypad))</p></td>
+<td><p>SDL_SCANCODE_KP_0</p></td>
+<td><p>SDLK_KP_0</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>Keypad 00</strong>" (the 00 key (numeric keypad))</p></td>
+<td><p>SDL_SCANCODE_KP_00</p></td>
+<td><p>SDLK_KP_00</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>Keypad 000</strong>" (the 000 key (numeric keypad))</p></td=
+>
+<td><p>SDL_SCANCODE_KP_000</p></td>
+<td><p>SDLK_KP_000</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>Keypad 1</strong>" (the 1 key (numeric keypad))</p></td>
+<td><p>SDL_SCANCODE_KP_1</p></td>
+<td><p>SDLK_KP_1</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>Keypad 2</strong>" (the 2 key (numeric keypad))</p></td>
+<td><p>SDL_SCANCODE_KP_2</p></td>
+<td><p>SDLK_KP_2</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>Keypad 3</strong>" (the 3 key (numeric keypad))</p></td>
+<td><p>SDL_SCANCODE_KP_3</p></td>
+<td><p>SDLK_KP_3</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>Keypad 4</strong>" (the 4 key (numeric keypad))</p></td>
+<td><p>SDL_SCANCODE_KP_4</p></td>
+<td><p>SDLK_KP_4</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>Keypad 5</strong>" (the 5 key (numeric keypad))</p></td>
+<td><p>SDL_SCANCODE_KP_5</p></td>
+<td><p>SDLK_KP_5</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>Keypad 6</strong>" (the 6 key (numeric keypad))</p></td>
+<td><p>SDL_SCANCODE_KP_6</p></td>
+<td><p>SDLK_KP_6</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>Keypad 7</strong>" (the 7 key (numeric keypad))</p></td>
+<td><p>SDL_SCANCODE_KP_7</p></td>
+<td><p>SDLK_KP_7</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>Keypad 8</strong>" (the 8 key (numeric keypad))</p></td>
+<td><p>SDL_SCANCODE_KP_8</p></td>
+<td><p>SDLK_KP_8</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>Keypad 9</strong>" (the 9 key (numeric keypad))</p></td>
+<td><p>SDL_SCANCODE_KP_9</p></td>
+<td><p>SDLK_KP_9</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>Keypad A</strong>" (the A key (numeric keypad))</p></td>
+<td><p>SDL_SCANCODE_KP_A</p></td>
+<td><p>SDLK_KP_A</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>Keypad &amp;</strong>" (the &amp; key (numeric keypad))</p>=
+</td>
+<td><p>SDL_SCANCODE_KP_AMPERSAND</p></td>
+<td><p>SDLK_KP_AMPERSAND</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>Keypad @</strong>" (the @ key (numeric keypad))</p></td>
+<td><p>SDL_SCANCODE_KP_AT</p></td>
+<td><p>SDLK_KP_AT</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>Keypad B</strong>" (the B key (numeric keypad))</p></td>
+<td><p>SDL_SCANCODE_KP_B</p></td>
+<td><p>SDLK_KP_B</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>Keypad Backspace</strong>" (the Backspace key (numeric keyp=
+ad))</p></td>
+<td><p>SDL_SCANCODE_KP_BACKSPACE</p></td>
+<td><p>SDLK_KP_BACKSPACE</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>Keypad Binary</strong>" (the Binary key (numeric keypad))</=
+p></td>
+<td><p>SDL_SCANCODE_KP_BINARY</p></td>
+<td><p>SDLK_KP_BINARY</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>Keypad C</strong>" (the C key (numeric keypad))</p></td>
+<td><p>SDL_SCANCODE_KP_C</p></td>
+<td><p>SDLK_KP_C</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>Keypad Clear</strong>" (the Clear key (numeric keypad))</p>=
+</td>
+<td><p>SDL_SCANCODE_KP_CLEAR</p></td>
+<td><p>SDLK_KP_CLEAR</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>Keypad ClearEntry</strong>" (the Clear Entry key (numeric k=
+eypad))</p></td>
+<td><p>SDL_SCANCODE_KP_CLEARENTRY</p></td>
+<td><p>SDLK_KP_CLEARENTRY</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>Keypad :</strong>" (the : key (numeric keypad))</p></td>
+<td><p>SDL_SCANCODE_KP_COLON</p></td>
+<td><p>SDLK_KP_COLON</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>Keypad ,</strong>" (the Comma key (numeric keypad))</p></td=
+>
+<td><p>SDL_SCANCODE_KP_COMMA</p></td>
+<td><p>SDLK_KP_COMMA</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>Keypad D</strong>" (the D key (numeric keypad))</p></td>
+<td><p>SDL_SCANCODE_KP_D</p></td>
+<td><p>SDLK_KP_D</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>Keypad &amp;&amp;</strong>" (the &amp;&amp; key (numeric ke=
+ypad))</p></td>
+<td><p>SDL_SCANCODE_KP_DBLAMPERSAND</p></td>
+<td><p>SDLK_KP_DBLAMPERSAND</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>Keypad ||</strong>" (the || key (numeric keypad))</p></td>
+<td><p>SDL_SCANCODE_KP_DBLVERTICALBAR</p></td>
+<td><p>SDLK_KP_DBLVERTICALBAR</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>Keypad Decimal</strong>" (the Decimal key (numeric keypad))=
+</p></td>
+<td><p>SDL_SCANCODE_KP_DECIMAL</p></td>
+<td><p>SDLK_KP_DECIMAL</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>Keypad /</strong>" (the / key (numeric keypad))</p></td>
+<td><p>SDL_SCANCODE_KP_DIVIDE</p></td>
+<td><p>SDLK_KP_DIVIDE</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>Keypad E</strong>" (the E key (numeric keypad))</p></td>
+<td><p>SDL_SCANCODE_KP_E</p></td>
+<td><p>SDLK_KP_E</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>Keypad Enter</strong>" (the Enter key (numeric keypad))</p>=
+</td>
+<td><p>SDL_SCANCODE_KP_ENTER</p></td>
+<td><p>SDLK_KP_ENTER</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>Keypad =3D</strong>" (the =3D key (numeric keypad))</p></td=
+>
+<td><p>SDL_SCANCODE_KP_EQUALS</p></td>
+<td><p>SDLK_KP_EQUALS</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>Keypad =3D (AS400)</strong>" (the Equals AS400 key (numeric=
+ keypad))</p></td>
+<td><p>SDL_SCANCODE_KP_EQUALSAS400</p></td>
+<td><p>SDLK_KP_EQUALSAS400</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>Keypad !</strong>" (the ! key (numeric keypad))</p></td>
+<td><p>SDL_SCANCODE_KP_EXCLAM</p></td>
+<td><p>SDLK_KP_EXCLAM</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>Keypad F</strong>" (the F key (numeric keypad))</p></td>
+<td><p>SDL_SCANCODE_KP_F</p></td>
+<td><p>SDLK_KP_F</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>Keypad &gt;</strong>" (the Greater key (numeric keypad))</p=
+></td>
+<td><p>SDL_SCANCODE_KP_GREATER</p></td>
+<td><p>SDLK_KP_GREATER</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>Keypad #</strong>" (the # key (numeric keypad))</p></td>
+<td><p>SDL_SCANCODE_KP_HASH</p></td>
+<td><p>SDLK_KP_HASH</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>Keypad Hexadecimal</strong>" (the Hexadecimal key (numeric =
+keypad))</p></td>
+<td><p>SDL_SCANCODE_KP_HEXADECIMAL</p></td>
+<td><p>SDLK_KP_HEXADECIMAL</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>Keypad {</strong>" (the Left Brace key (numeric keypad))</p=
+></td>
+<td><p>SDL_SCANCODE_KP_LEFTBRACE</p></td>
+<td><p>SDLK_KP_LEFTBRACE</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>Keypad (</strong>" (the Left Parenthesis key (numeric keypa=
+d))</p></td>
+<td><p>SDL_SCANCODE_KP_LEFTPAREN</p></td>
+<td><p>SDLK_KP_LEFTPAREN</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>Keypad &lt;</strong>" (the Less key (numeric keypad))</p></=
+td>
+<td><p>SDL_SCANCODE_KP_LESS</p></td>
+<td><p>SDLK_KP_LESS</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>Keypad MemAdd</strong>" (the Mem Add key (numeric keypad))<=
+/p></td>
+<td><p>SDL_SCANCODE_KP_MEMADD</p></td>
+<td><p>SDLK_KP_MEMADD</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>Keypad MemClear</strong>" (the Mem Clear key (numeric keypa=
+d))</p></td>
+<td><p>SDL_SCANCODE_KP_MEMCLEAR</p></td>
+<td><p>SDLK_KP_MEMCLEAR</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>Keypad MemDivide</strong>" (the Mem Divide key (numeric key=
+pad))</p></td>
+<td><p>SDL_SCANCODE_KP_MEMDIVIDE</p></td>
+<td><p>SDLK_KP_MEMDIVIDE</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>Keypad MemMultiply</strong>" (the Mem Multiply key (numeric=
+ keypad))</p></td>
+<td><p>SDL_SCANCODE_KP_MEMMULTIPLY</p></td>
+<td><p>SDLK_KP_MEMMULTIPLY</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>Keypad MemRecall</strong>" (the Mem Recall key (numeric key=
+pad))</p></td>
+<td><p>SDL_SCANCODE_KP_MEMRECALL</p></td>
+<td><p>SDLK_KP_MEMRECALL</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>Keypad MemStore</strong>" (the Mem Store key (numeric keypa=
+d))</p></td>
+<td><p>SDL_SCANCODE_KP_MEMSTORE</p></td>
+<td><p>SDLK_KP_MEMSTORE</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>Keypad MemSubtract</strong>" (the Mem Subtract key (numeric=
+ keypad))</p></td>
+<td><p>SDL_SCANCODE_KP_MEMSUBTRACT</p></td>
+<td><p>SDLK_KP_MEMSUBTRACT</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>Keypad -</strong>" (the - key (numeric keypad))</p></td>
+<td><p>SDL_SCANCODE_KP_MINUS</p></td>
+<td><p>SDLK_KP_MINUS</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>Keypad *</strong>" (the * key (numeric keypad))</p></td>
+<td><p>SDL_SCANCODE_KP_MULTIPLY</p></td>
+<td><p>SDLK_KP_MULTIPLY</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>Keypad Octal</strong>" (the Octal key (numeric keypad))</p>=
+</td>
+<td><p>SDL_SCANCODE_KP_OCTAL</p></td>
+<td><p>SDLK_KP_OCTAL</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>Keypad %</strong>" (the Percent key (numeric keypad))</p></=
+td>
+<td><p>SDL_SCANCODE_KP_PERCENT</p></td>
+<td><p>SDLK_KP_PERCENT</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>Keypad .</strong>" (the . key (numeric keypad))</p></td>
+<td><p>SDL_SCANCODE_KP_PERIOD</p></td>
+<td><p>SDLK_KP_PERIOD</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>Keypad +</strong>" (the + key (numeric keypad))</p></td>
+<td><p>SDL_SCANCODE_KP_PLUS</p></td>
+<td><p>SDLK_KP_PLUS</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>Keypad +/-</strong>" (the +/- key (numeric keypad))</p></td=
+>
+<td><p>SDL_SCANCODE_KP_PLUSMINUS</p></td>
+<td><p>SDLK_KP_PLUSMINUS</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>Keypad ^</strong>" (the Power key (numeric keypad))</p></td=
+>
+<td><p>SDL_SCANCODE_KP_POWER</p></td>
+<td><p>SDLK_KP_POWER</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>Keypad }</strong>" (the Right Brace key (numeric keypad))</=
+p></td>
+<td><p>SDL_SCANCODE_KP_RIGHTBRACE</p></td>
+<td><p>SDLK_KP_RIGHTBRACE</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>Keypad )</strong>" (the Right Parenthesis key (numeric keyp=
+ad))</p></td>
+<td><p>SDL_SCANCODE_KP_RIGHTPAREN</p></td>
+<td><p>SDLK_KP_RIGHTPAREN</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>Keypad Space</strong>" (the Space key (numeric keypad))</p>=
+</td>
+<td><p>SDL_SCANCODE_KP_SPACE</p></td>
+<td><p>SDLK_KP_SPACE</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>Keypad Tab</strong>" (the Tab key (numeric keypad))</p></td=
+>
+<td><p>SDL_SCANCODE_KP_TAB</p></td>
+<td><p>SDLK_KP_TAB</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>Keypad |</strong>" (the | key (numeric keypad))</p></td>
+<td><p>SDL_SCANCODE_KP_VERTICALBAR</p></td>
+<td><p>SDLK_KP_VERTICALBAR</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>Keypad XOR</strong>" (the XOR key (numeric keypad))</p></td=
+>
+<td><p>SDL_SCANCODE_KP_XOR</p></td>
+<td><p>SDLK_KP_XOR</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>L</strong>"</p></td>
+<td><p>SDL_SCANCODE_L</p></td>
+<td><p>SDLK_l</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>Left Alt</strong>" (alt, option)</p></td>
+<td><p>SDL_SCANCODE_LALT</p></td>
+<td><p>SDLK_LALT</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>Left Ctrl</strong>"</p></td>
+<td><p>SDL_SCANCODE_LCTRL</p></td>
+<td><p>SDLK_LCTRL</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>Left</strong>" (the Left arrow key (navigation keypad))</p>=
+</td>
+<td><p>SDL_SCANCODE_LEFT</p></td>
+<td><p>SDLK_LEFT</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>[</strong>"</p></td>
+<td><p>SDL_SCANCODE_LEFTBRACKET</p></td>
+<td><p>SDLK_LEFTBRACKET</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>Left GUI</strong>" (windows, command (apple), meta)</p></td=
+>
+<td><p>SDL_SCANCODE_LGUI</p></td>
+<td><p>SDLK_LGUI</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>Left Shift</strong>"</p></td>
+<td><p>SDL_SCANCODE_LSHIFT</p></td>
+<td><p>SDLK_LSHIFT</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>M</strong>"</p></td>
+<td><p>SDL_SCANCODE_M</p></td>
+<td><p>SDLK_m</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>Mail</strong>" (the Mail/eMail key)</p></td>
+<td><p>SDL_SCANCODE_MAIL</p></td>
+<td><p>SDLK_MAIL</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>MediaSelect</strong>" (the Media Select key)</p></td>
+<td><p>SDL_SCANCODE_MEDIASELECT</p></td>
+<td><p>SDLK_MEDIASELECT</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>Menu</strong>"</p></td>
+<td><p>SDL_SCANCODE_MENU</p></td>
+<td><p>SDLK_MENU</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>-</strong>"</p></td>
+<td><p>SDL_SCANCODE_MINUS</p></td>
+<td><p>SDLK_MINUS</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>ModeSwitch</strong>" (I'm not sure if this is really not co=
+vered by any of the above, but since there's a special KMOD_MODE for it I'm=
+ adding it here)</p></td>
+<td><p>SDL_SCANCODE_MODE</p></td>
+<td><p>SDLK_MODE</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>Mute</strong>"</p></td>
+<td><p>SDL_SCANCODE_MUTE</p></td>
+<td><p>SDLK_MUTE</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>N</strong>"</p></td>
+<td><p>SDL_SCANCODE_N</p></td>
+<td><p>SDLK_n</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>Numlock</strong>" (the Num Lock key (PC) / the Clear key (M=
+ac))</p></td>
+<td><p>SDL_SCANCODE_NUMLOCKCLEAR</p></td>
+<td><p>SDLK_NUMLOCKCLEAR</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>O</strong>"</p></td>
+<td><p>SDL_SCANCODE_O</p></td>
+<td><p>SDLK_o</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>Oper</strong>"</p></td>
+<td><p>SDL_SCANCODE_OPER</p></td>
+<td><p>SDLK_OPER</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>Out</strong>"</p></td>
+<td><p>SDL_SCANCODE_OUT</p></td>
+<td><p>SDLK_OUT</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>P</strong>"</p></td>
+<td><p>SDL_SCANCODE_P</p></td>
+<td><p>SDLK_p</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>PageDown</strong>"</p></td>
+<td><p>SDL_SCANCODE_PAGEDOWN</p></td>
+<td><p>SDLK_PAGEDOWN</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>PageUp</strong>"</p></td>
+<td><p>SDL_SCANCODE_PAGEUP</p></td>
+<td><p>SDLK_PAGEUP</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>Paste</strong>"</p></td>
+<td><p>SDL_SCANCODE_PASTE</p></td>
+<td><p>SDLK_PASTE</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>Pause</strong>" (the Pause / Break key)</p></td>
+<td><p>SDL_SCANCODE_PAUSE</p></td>
+<td><p>SDLK_PAUSE</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>.</strong>"</p></td>
+<td><p>SDL_SCANCODE_PERIOD</p></td>
+<td><p>SDLK_PERIOD</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>Power</strong>" (The USB document says this is a status fla=
+g, not a physical key - but some Mac keyboards do have a power key.)</p></t=
+d>
+<td><p>SDL_SCANCODE_POWER</p></td>
+<td><p>SDLK_POWER</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>PrintScreen</strong>"</p></td>
+<td><p>SDL_SCANCODE_PRINTSCREEN</p></td>
+<td><p>SDLK_PRINTSCREEN</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>Prior</strong>"</p></td>
+<td><p>SDL_SCANCODE_PRIOR</p></td>
+<td><p>SDLK_PRIOR</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>Q</strong>"</p></td>
+<td><p>SDL_SCANCODE_Q</p></td>
+<td><p>SDLK_q</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>R</strong>"</p></td>
+<td><p>SDL_SCANCODE_R</p></td>
+<td><p>SDLK_r</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>Right Alt</strong>" (alt gr, option)</p></td>
+<td><p>SDL_SCANCODE_RALT</p></td>
+<td><p>SDLK_RALT</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>Right Ctrl</strong>"</p></td>
+<td><p>SDL_SCANCODE_RCTRL</p></td>
+<td><p>SDLK_RCTRL</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>Return</strong>" (the Enter key (main keyboard))</p></td>
+<td><p>SDL_SCANCODE_RETURN</p></td>
+<td><p>SDLK_RETURN</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>Return</strong>"</p></td>
+<td><p>SDL_SCANCODE_RETURN2</p></td>
+<td><p>SDLK_RETURN2</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>Right GUI</strong>" (windows, command (apple), meta)</p></t=
+d>
+<td><p>SDL_SCANCODE_RGUI</p></td>
+<td><p>SDLK_RGUI</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>Right</strong>" (the Right arrow key (navigation keypad))</=
+p></td>
+<td><p>SDL_SCANCODE_RIGHT</p></td>
+<td><p>SDLK_RIGHT</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>]</strong>"</p></td>
+<td><p>SDL_SCANCODE_RIGHTBRACKET</p></td>
+<td><p>SDLK_RIGHTBRACKET</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>Right Shift</strong>"</p></td>
+<td><p>SDL_SCANCODE_RSHIFT</p></td>
+<td><p>SDLK_RSHIFT</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>S</strong>"</p></td>
+<td><p>SDL_SCANCODE_S</p></td>
+<td><p>SDLK_s</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>ScrollLock</strong>"</p></td>
+<td><p>SDL_SCANCODE_SCROLLLOCK</p></td>
+<td><p>SDLK_SCROLLLOCK</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>Select</strong>"</p></td>
+<td><p>SDL_SCANCODE_SELECT</p></td>
+<td><p>SDLK_SELECT</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>;</strong>"</p></td>
+<td><p>SDL_SCANCODE_SEMICOLON</p></td>
+<td><p>SDLK_SEMICOLON</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>Separator</strong>"</p></td>
+<td><p>SDL_SCANCODE_SEPARATOR</p></td>
+<td><p>SDLK_SEPARATOR</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>/</strong>"</p></td>
+<td><p>SDL_SCANCODE_SLASH</p></td>
+<td><p>SDLK_SLASH</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>Sleep</strong>" (the Sleep key)</p></td>
+<td><p>SDL_SCANCODE_SLEEP</p></td>
+<td><p>SDLK_SLEEP</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>Space</strong>" (the Space Bar key(s))</p></td>
+<td><p>SDL_SCANCODE_SPACE</p></td>
+<td><p>SDLK_SPACE</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>Stop</strong>"</p></td>
+<td><p>SDL_SCANCODE_STOP</p></td>
+<td><p>SDLK_STOP</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>SysReq</strong>" (the SysReq key)</p></td>
+<td><p>SDL_SCANCODE_SYSREQ</p></td>
+<td><p>SDLK_SYSREQ</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>T</strong>"</p></td>
+<td><p>SDL_SCANCODE_T</p></td>
+<td><p>SDLK_t</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>Tab</strong>" (the Tab key)</p></td>
+<td><p>SDL_SCANCODE_TAB</p></td>
+<td><p>SDLK_TAB</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>ThousandsSeparator</strong>" (the Thousands Separator key)<=
+/p></td>
+<td><p>SDL_SCANCODE_THOUSANDSSEPARATOR</p></td>
+<td><p>SDLK_THOUSANDSSEPARATOR</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>U</strong>"</p></td>
+<td><p>SDL_SCANCODE_U</p></td>
+<td><p>SDLK_u</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>Undo</strong>"</p></td>
+<td><p>SDL_SCANCODE_UNDO</p></td>
+<td><p>SDLK_UNDO</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"" (no name, empty string)</p></td>
+<td><p>SDL_SCANCODE_UNKNOWN</p></td>
+<td><p>SDLK_UNKNOWN</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>Up</strong>" (the Up arrow key (navigation keypad))</p></td=
+>
+<td><p>SDL_SCANCODE_UP</p></td>
+<td><p>SDLK_UP</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>V</strong>"</p></td>
+<td><p>SDL_SCANCODE_V</p></td>
+<td><p>SDLK_v</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>VolumeDown</strong>"</p></td>
+<td><p>SDL_SCANCODE_VOLUMEDOWN</p></td>
+<td><p>SDLK_VOLUMEDOWN</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>VolumeUp</strong>"</p></td>
+<td><p>SDL_SCANCODE_VOLUMEUP</p></td>
+<td><p>SDLK_VOLUMEUP</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>W</strong>"</p></td>
+<td><p>SDL_SCANCODE_W</p></td>
+<td><p>SDLK_w</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>WWW</strong>" (the WWW/World Wide Web key)</p></td>
+<td><p>SDL_SCANCODE_WWW</p></td>
+<td><p>SDLK_WWW</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>X</strong>"</p></td>
+<td><p>SDL_SCANCODE_X</p></td>
+<td><p>SDLK_x</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>Y</strong>"</p></td>
+<td><p>SDL_SCANCODE_Y</p></td>
+<td><p>SDLK_y</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>Z</strong>"</p></td>
+<td><p>SDL_SCANCODE_Z</p></td>
+<td><p>SDLK_z</p></td>
+</tr>
+<tr class=3D"odd">
+<td></td>
+<td></td>
+<td><p>&lt;bgcolor=3D"#EDEDED"&gt;<em>These physical keys do not have corre=
+sponding virtual key values</em></p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"" (no name, empty string; used on Asian keyboards, see footnotes in=
+ USB doc)</p></td>
+<td><p>SDL_SCANCODE_INTERNATIONAL1</p></td>
+<td><p><em>(none)</em></p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"" (no name, empty string)</p></td>
+<td><p>SDL_SCANCODE_INTERNATIONAL2</p></td>
+<td><p><em>(none)</em></p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"" (no name, empty string; Yen)</p></td>
+<td><p>SDL_SCANCODE_INTERNATIONAL3</p></td>
+<td><p><em>(none)</em></p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"" (no name, empty string)</p></td>
+<td><p>SDL_SCANCODE_INTERNATIONAL4</p></td>
+<td><p><em>(none)</em></p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"" (no name, empty string)</p></td>
+<td><p>SDL_SCANCODE_INTERNATIONAL5</p></td>
+<td><p><em>(none)</em></p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"" (no name, empty string)</p></td>
+<td><p>SDL_SCANCODE_INTERNATIONAL6</p></td>
+<td><p><em>(none)</em></p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"" (no name, empty string)</p></td>
+<td><p>SDL_SCANCODE_INTERNATIONAL7</p></td>
+<td><p><em>(none)</em></p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"" (no name, empty string)</p></td>
+<td><p>SDL_SCANCODE_INTERNATIONAL8</p></td>
+<td><p><em>(none)</em></p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"" (no name, empty string)</p></td>
+<td><p>SDL_SCANCODE_INTERNATIONAL9</p></td>
+<td><p><em>(none)</em></p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"" (no name, empty string; Hangul/English toggle)</p></td>
+<td><p>SDL_SCANCODE_LANG1</p></td>
+<td><p><em>(none)</em></p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"" (no name, empty string; Hanja conversion)</p></td>
+<td><p>SDL_SCANCODE_LANG2</p></td>
+<td><p><em>(none)</em></p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"" (no name, empty string; Katakana)</p></td>
+<td><p>SDL_SCANCODE_LANG3</p></td>
+<td><p><em>(none)</em></p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"" (no name, empty string; Hiragana)</p></td>
+<td><p>SDL_SCANCODE_LANG4</p></td>
+<td><p><em>(none)</em></p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"" (no name, empty string; Zenkaku/Hankaku)</p></td>
+<td><p>SDL_SCANCODE_LANG5</p></td>
+<td><p><em>(none)</em></p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"" (no name, empty string; reserved)</p></td>
+<td><p>SDL_SCANCODE_LANG6</p></td>
+<td><p><em>(none)</em></p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"" (no name, empty string; reserved)</p></td>
+<td><p>SDL_SCANCODE_LANG7</p></td>
+<td><p><em>(none)</em></p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"" (no name, empty string; reserved)</p></td>
+<td><p>SDL_SCANCODE_LANG8</p></td>
+<td><p><em>(none)</em></p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"" (no name, empty string; reserved)</p></td>
+<td><p>SDL_SCANCODE_LANG9</p></td>
+<td><p><em>(none)</em></p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"" (no name, empty string)</p></td>
+<td><p>SDL_SCANCODE_LOCKINGCAPSLOCK</p></td>
+<td><p><em>(none)</em></p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"" (no name, empty string)</p></td>
+<td><p>SDL_SCANCODE_LOCKINGNUMLOCK</p></td>
+<td><p><em>(none)</em></p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"" (no name, empty string)</p></td>
+<td><p>SDL_SCANCODE_LOCKINGSCROLLLOCK</p></td>
+<td><p><em>(none)</em></p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"" (no name, empty string; This is the additional key that ISO keybo=
+ards have over ANSI ones, located between left shift and Y. Produces GRAVE =
+ACCENT and TILDE in a US or UK Mac layout, REVERSE SOLIDUS (backslash) and =
+VERTICAL LINE in a US or UK Windows layout, and LESS-THAN SIGN and GREATER-=
+THAN SIGN in a Swiss German, German, or French layout.)</p></td>
+<td><p>SDL_SCANCODE_NONUSBACKSLASH</p></td>
+<td><p><em>(none)</em></p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>#</strong>" (ISO USB keyboards actually use this code inste=
+ad of 49 for the same key, but all OSes I've seen treat the two codes ident=
+ically. So, as an implementor, unless your keyboard generates both of those=
+ codes and your OS treats them differently, you should generate SDL_SCANCOD=
+E_BACKSLASH instead of this code. As a user, you should not rely on this co=
+de because SDL will never generate it with most (all?) keyboards.)</p></td>
+<td><p>SDL_SCANCODE_NONUSHASH</p></td>
+<td><p><em>(none)</em></p></td>
+</tr>
+<tr class=3D"odd">
+<td></td>
+<td></td>
+<td><p>&lt;bgcolor=3D"#EDEDED"&gt;<em>These virtual key values do not have =
+corresponding physical keys</em></p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>&amp;</strong>"</p></td>
+<td><p><em>(none)</em></p></td>
+<td><p>SDLK_AMPERSAND</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>*</strong>"</p></td>
+<td><p><em>(none)</em></p></td>
+<td><p>SDLK_ASTERISK</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>@</strong>"</p></td>
+<td><p><em>(none)</em></p></td>
+<td><p>SDLK_AT</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>^</strong>"</p></td>
+<td><p><em>(none)</em></p></td>
+<td><p>SDLK_CARET</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>:</strong>"</p></td>
+<td><p><em>(none)</em></p></td>
+<td><p>SDLK_COLON</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>$</strong>"</p></td>
+<td><p><em>(none)</em></p></td>
+<td><p>SDLK_DOLLAR</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>!</strong>"</p></td>
+<td><p><em>(none)</em></p></td>
+<td><p>SDLK_EXCLAIM</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>&gt;</strong>"</p></td>
+<td><p><em>(none)</em></p></td>
+<td><p>SDLK_GREATER</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>#</strong>"</p></td>
+<td><p><em>(none)</em></p></td>
+<td><p>SDLK_HASH</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>(</strong>"</p></td>
+<td><p><em>(none)</em></p></td>
+<td><p>SDLK_LEFTPAREN</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>&lt;</strong>"</p></td>
+<td><p><em>(none)</em></p></td>
+<td><p>SDLK_LESS</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>%</strong>"</p></td>
+<td><p><em>(none)</em></p></td>
+<td><p>SDLK_PERCENT</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>+</strong>"</p></td>
+<td><p><em>(none)</em></p></td>
+<td><p>SDLK_PLUS</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>?</strong>"</p></td>
+<td><p><em>(none)</em></p></td>
+<td><p>SDLK_QUESTION</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>"</strong>"</p></td>
+<td><p><em>(none)</em></p></td>
+<td><p>SDLK_QUOTEDBL</p></td>
+</tr>
+<tr class=3D"odd">
+<td><p>"<strong>)</strong>"</p></td>
+<td><p><em>(none)</em></p></td>
+<td><p>SDLK_RIGHTPAREN</p></td>
+</tr>
+<tr class=3D"even">
+<td><p>"<strong>_</strong>"</p></td>
+<td><p><em>(none)</em></p></td>
+<td><p>SDLK_UNDERSCORE</p></td>
+</tr>
+</tbody>
+</table>
+<h2 class=3D"anchorText" id=3D"code_examples">Code Examples<a href=3D"https=
+://wiki.libsdl.org/SDL2/SDL_ScancodeAndKeycode#code_examples"><img src=3D"h=
+ttps://wiki.libsdl.org/static_files/link.svg" class=3D"anchorImage" width=
+=3D"16" height=3D"16" alt=3D""></a></h2>
+<div class=3D"sourceCode" id=3D"cb1"><pre class=3D"sourceCode c"><code clas=
+s=3D"sourceCode c"><span id=3D"cb1-1"><a href=3D"https://wiki.libsdl.org/SD=
+L2/SDL_ScancodeAndKeycode#cb1-1" aria-hidden=3D"true" tabindex=3D"-1"></a> =
+ <span class=3D"kw">extern</span> SDL_Event *event;</span>
+<span id=3D"cb1-2"><a href=3D"https://wiki.libsdl.org/SDL2/SDL_ScancodeAndK=
+eycode#cb1-2" aria-hidden=3D"true" tabindex=3D"-1"></a></span>
+<span id=3D"cb1-3"><a href=3D"https://wiki.libsdl.org/SDL2/SDL_ScancodeAndK=
+eycode#cb1-3" aria-hidden=3D"true" tabindex=3D"-1"></a>  <span class=3D"co"=
+>//checks if a key is being remapped and prints what the remapping is</span=
+></span>
+<span id=3D"cb1-4"><a href=3D"https://wiki.libsdl.org/SDL2/SDL_ScancodeAndK=
+eycode#cb1-4" aria-hidden=3D"true" tabindex=3D"-1"></a>  <span class=3D"cf"=
+>if</span> (event-&gt;key.keysym.scancode !=3D SDL_GetScancodeFromKey(event=
+-&gt;key.keysym.sym))</span>
+<span id=3D"cb1-5"><a href=3D"https://wiki.libsdl.org/SDL2/SDL_ScancodeAndK=
+eycode#cb1-5" aria-hidden=3D"true" tabindex=3D"-1"></a>    printf(<span cla=
+ss=3D"st">"Physical %s key acting as %s key"</span>,</span>
+<span id=3D"cb1-6"><a href=3D"https://wiki.libsdl.org/SDL2/SDL_ScancodeAndK=
+eycode#cb1-6" aria-hidden=3D"true" tabindex=3D"-1"></a>      SDL_GetScancod=
+eName(event-&gt;key.keysym.scancode),</span>
+<span id=3D"cb1-7"><a href=3D"https://wiki.libsdl.org/SDL2/SDL_ScancodeAndK=
+eycode#cb1-7" aria-hidden=3D"true" tabindex=3D"-1"></a>      SDL_GetKeyName=
+(event-&gt;key.keysym.sym));</span></code></pre></div>
+<h2 class=3D"anchorText" id=3D"remarks">Remarks<a href=3D"https://wiki.libs=
+dl.org/SDL2/SDL_ScancodeAndKeycode#remarks"><img src=3D"https://wiki.libsdl=
+.org/static_files/link.svg" class=3D"anchorImage" width=3D"16" height=3D"16=
+" alt=3D""></a></h2>
+<p>To look up a scancode or keycode by decimal or hexadecimal value you can=
+ use the following tables:</p>
+<dl>
+<dt></dt>
+<dd><a href=3D"https://wiki.libsdl.org/SDL2/SDLScancodeLookup" title=3D"wik=
+ilink">SDL Scancode Lookup Table</a>
+</dd>
+<dd><a href=3D"https://wiki.libsdl.org/SDL2/SDLKeycodeLookup" title=3D"wiki=
+link">SDL Keycode Lookup Table</a>
+</dd>
+</dl>
+<h2 class=3D"anchorText" id=3D"related_enumerations">Related Enumerations<a=
+ href=3D"https://wiki.libsdl.org/SDL2/SDL_ScancodeAndKeycode#related_enumer=
+ations"><img src=3D"https://wiki.libsdl.org/static_files/link.svg" class=3D=
+"anchorImage" width=3D"16" height=3D"16" alt=3D""></a></h2>
+<dl>
+<dt></dt>
+<dd><a href=3D"https://wiki.libsdl.org/SDL2/SDL_Keycode" title=3D"wikilink"=
+>SDL_Keycode</a>
+</dd>
+<dd><a href=3D"https://wiki.libsdl.org/SDL2/SDL_Scancode" title=3D"wikilink=
+">SDL_Scancode</a>
+</dd>
+</dl>
+<h2 class=3D"anchorText" id=3D"related_structures">Related Structures<a hre=
+f=3D"https://wiki.libsdl.org/SDL2/SDL_ScancodeAndKeycode#related_structures=
+"><img src=3D"https://wiki.libsdl.org/static_files/link.svg" class=3D"ancho=
+rImage" width=3D"16" height=3D"16" alt=3D""></a></h2>
+<dl>
+<dt></dt>
+<dd><a href=3D"https://wiki.libsdl.org/SDL2/SDL_KeyboardEvent" title=3D"wik=
+ilink">SDL_KeyboardEvent</a>
+</dd>
+<dd><a href=3D"https://wiki.libsdl.org/SDL2/SDL_Keysym" title=3D"wikilink">=
+SDL_Keysym</a>
+</dd>
+</dl>
+<h2 class=3D"anchorText" id=3D"related_functions">Related Functions<a href=
+=3D"https://wiki.libsdl.org/SDL2/SDL_ScancodeAndKeycode#related_functions">=
+<img src=3D"https://wiki.libsdl.org/static_files/link.svg" class=3D"anchorI=
+mage" width=3D"16" height=3D"16" alt=3D""></a></h2>
+<dl>
+<dt></dt>
+<dd><a href=3D"https://wiki.libsdl.org/SDL2/SDL_GetKeyboardState" title=3D"=
+wikilink">SDL_GetKeyboardState</a>
+</dd>
+<dd><a href=3D"https://wiki.libsdl.org/SDL2/SDL_GetKeyFromScancode" title=
+=3D"wikilink">SDL_GetKeyFromScancode</a>
+</dd>
+<dd><a href=3D"https://wiki.libsdl.org/SDL2/SDL_GetScancodeFromKey" title=
+=3D"wikilink">SDL_GetScancodeFromKey</a>
+</dd>
+<dd><a href=3D"https://wiki.libsdl.org/SDL2/SDL_GetKeyName" title=3D"wikili=
+nk">SDL_GetKeyName</a>
+</dd>
+<dd><a href=3D"https://wiki.libsdl.org/SDL2/SDL_GetScancodeName" title=3D"w=
+ikilink">SDL_GetScancodeName</a>
+</dd>
+</dl>
+<hr>
+
+
+<div class=3D"viewtoolbar">
+<hr>
+[
+<a href=3D"https://wiki.libsdl.org/SDL2/SDL_ScancodeAndKeycode/edit">edit</=
+a>
+|
+<a href=3D"https://wiki.libsdl.org/SDL2/SDL_ScancodeAndKeycode/delete">dele=
+te</a>
+|
+<a href=3D"https://wiki.libsdl.org/SDL2/SDL_ScancodeAndKeycode/history">his=
+tory</a>
+|
+<a href=3D"https://github.com/libsdl-org/sdlwiki/issues/new?title=3DFeedbac=
+k%20on%20page%20SDL2/SDL_ScancodeAndKeycode">feedback</a>
+|
+<a href=3D"https://wiki.libsdl.org/SDL2/SDL_ScancodeAndKeycode/raw">raw</a>
+]
+</div>
+
+
+<div class=3D"wikibottombanner">
+<center>
+<p>
+[
+<a href=3D"https://wiki.libsdl.org/">front page</a>
+|
+<a href=3D"https://wiki.libsdl.org/wiki/index">index</a>
+|
+<a href=3D"https://wiki.libsdl.org/wiki/search">search</a>
+|
+<a href=3D"https://github.com/libsdl-org/sdlwiki/commits/main">recent chang=
+es</a>
+|
+<a href=3D"https://github.com/libsdl-org/sdlwiki">git repo</a>
+|
+<a href=3D"https://wiki.libsdl.org/static_files/offline/sdlwiki.zip">offlin=
+e html</a>
+]
+</p>
+<p>All wiki content is licensed under <a href=3D"https://creativecommons.or=
+g/licenses/by/4.0/">Creative Commons Attribution 4.0 International (CC BY 4=
+.0)</a>.<br>
+Wiki powered by <a href=3D"https://github.com/libsdl-org/ghwikipp">ghwikipp=
+</a>.</p>
+</center></div>
+
+
+
+
+</body><grammarly-desktop-integration data-grammarly-shadow-root=3D"true"><=
+template shadowmode=3D"open"><div aria-label=3D"grammarly-integration" role=
+=3D"group" tabindex=3D"-1" class=3D"grammarly-desktop-integration" data-con=
+tent=3D"{&quot;mode&quot;:&quot;full&quot;,&quot;isActive&quot;:true,&quot;=
+isUserDisabled&quot;:false}"></div></template></grammarly-desktop-integrati=
+on></html>
+------MultipartBoundary--4L5IOA8va70z9FNUz5otqt1DWDlIArFUo4wYUXUTsQ----
+Content-Type: text/css
+Content-Transfer-Encoding: quoted-printable
+Content-Location: https://wiki.libsdl.org/static_files/ghwikipp.css
+
+@charset "utf-8";
+
+:root { color-scheme: dark light; }
+
+body { background-color: white; padding: 2vw; color: rgb(51, 51, 51); max-w=
+idth: 1200px; margin: 0px auto; font-size: 16px; line-height: 1.5; font-fam=
+ily: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica,=
+ Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji"; overflow-wrap: b=
+reak-word; }
+
+a { color: rgb(9, 105, 218); }
+
+a:visited { color: rgb(6, 73, 152); }
+
+h1 { border-bottom: 2px solid rgb(239, 239, 239); }
+
+h2 { border-bottom: 1px solid rgb(239, 239, 239); }
+
+p { max-width: 85ch; }
+
+li { max-width: 85ch; }
+
+div.sourceCode { background-color: rgb(246, 248, 250); max-width: 100%; pad=
+ding: 16px; }
+
+code { background-color: rgb(246, 248, 250); padding: 0px; font-family: ui-=
+monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", m=
+onospace; }
+
+table { border: 1px solid rgb(128, 128, 128); border-collapse: collapse; }
+
+td { border: 1px solid rgb(128, 128, 128); padding: 5px; }
+
+tr:nth-child(2n) { background-color: rgb(246, 248, 250); }
+
+.wikitopbanner { background-color: rgb(239, 239, 239); padding: 10px; margi=
+n-bottom: 10px; width: auto; }
+
+.wikibottombanner { background-color: rgb(239, 239, 239); padding: 10px; ma=
+rgin-top: 10px; width: auto; }
+
+.alertBox { background-color: rgb(248, 215, 218); border: 1px solid rgb(245=
+, 198, 203); max-width: 60%; margin: auto; }
+
+.anchorImage { visibility: hidden; padding-left: 0.2em; color: rgb(255, 255=
+, 255); }
+
+.anchorText:hover .anchorImage { visibility: visible; }
+
+hr { display: block; height: 1px; border-width: 1px 0px 0px; border-right-s=
+tyle: initial; border-bottom-style: initial; border-left-style: initial; bo=
+rder-right-color: initial; border-bottom-color: initial; border-left-color:=
+ initial; border-image: initial; border-top-style: solid; border-top-color:=
+ rgb(239, 239, 239); margin: 1em 0px; padding: 0px; }
+
+@media (prefers-color-scheme: dark) {
+  body { color: rgb(230, 237, 243); background-color: rgb(13, 17, 23); }
+  h1 { border-color: rgba(48, 54, 61, 0.7); }
+  h2 { border-color: rgba(48, 54, 61, 0.7); }
+  hr { border-color: rgba(48, 54, 61, 0.7); }
+  div.sourceCode { background-color: rgb(22, 27, 34); }
+  code { background-color: rgb(22, 27, 34); }
+  a { color: rgb(68, 147, 248); }
+  a:visited { color: rgb(47, 102, 173); }
+  table { border-color: rgba(48, 54, 61, 0.7); }
+  td { border-color: rgba(48, 54, 61, 0.7); }
+  tr:nth-child(2n) { background-color: rgb(22, 27, 34); }
+  .wikitopbanner { background-color: rgb(38, 48, 64); }
+  .wikibottombanner { background-color: rgb(38, 48, 64); }
+  .anchorText:hover .anchorImage { filter: invert(100%); }
+}
+
+@media print {
+  body { font-size: 12px; }
+  table { font-size: inherit; }
+  a:visited { color: rgb(9, 105, 218); }
+  .wikitopbanner, .anchorText, .wikibottombanner { display: none; }
+}
+------MultipartBoundary--4L5IOA8va70z9FNUz5otqt1DWDlIArFUo4wYUXUTsQ----
+Content-Type: text/css
+Content-Transfer-Encoding: quoted-printable
+Content-Location: https://wiki.libsdl.org/static_files/pandoc.css
+
+@charset "utf-8";
+
+code { white-space: pre-wrap; }
+
+span.smallcaps { font-variant: small-caps; }
+
+span.underline { text-decoration: underline; }
+
+div.column { display: inline-block; vertical-align: top; width: 50%; }
+
+a.sourceLine { display: inline-block; line-height: 1.25; }
+
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inher=
+it; }
+
+a.sourceLine:empty { height: 1.2em; }
+
+.sourceCode { overflow: visible; }
+
+code.sourceCode { white-space: pre; position: relative; }
+
+div.sourceCode { margin: 1em 0px; }
+
+pre.sourceCode { margin: 0px; }
+
+@media screen {
+  div.sourceCode { overflow: auto; }
+}
+
+@media print {
+  code.sourceCode { white-space: pre-wrap; }
+  a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+
+pre.numberSource a.sourceLine { position: relative; left: -4em; }
+
+pre.numberSource a.sourceLine::before { content: attr(title); position: rel=
+ative; left: -1em; text-align: right; vertical-align: baseline; border: non=
+e; pointer-events: all; display: inline-block; user-select: none; padding: =
+0px 4px; width: 4em; color: rgb(170, 170, 170); }
+
+pre.numberSource { margin-left: 3em; border-left: 1px solid rgb(170, 170, 1=
+70); padding-left: 4px; }
+
+div.sourceCode { }
+
+@media screen {
+  a.sourceLine::before { text-decoration: underline; }
+}
+
+code span.al { color: rgb(255, 0, 0); font-weight: bold; }
+
+code span.an { color: rgb(96, 160, 176); font-weight: bold; font-style: ita=
+lic; }
+
+code span.at { color: rgb(125, 144, 41); }
+
+code span.bn { color: rgb(64, 160, 112); }
+
+code span.bu { }
+
+code span.cf { color: rgb(0, 112, 32); font-weight: bold; }
+
+code span.ch { color: rgb(64, 112, 160); }
+
+code span.cn { color: rgb(136, 0, 0); }
+
+code span.co { color: rgb(96, 160, 176); font-style: italic; }
+
+code span.cv { color: rgb(96, 160, 176); font-weight: bold; font-style: ita=
+lic; }
+
+code span.do { color: rgb(186, 33, 33); font-style: italic; }
+
+code span.dt { color: rgb(144, 32, 0); }
+
+code span.dv { color: rgb(64, 160, 112); }
+
+code span.er { color: rgb(255, 0, 0); font-weight: bold; }
+
+code span.ex { }
+
+code span.fl { color: rgb(64, 160, 112); }
+
+code span.fu { color: rgb(6, 40, 126); }
+
+code span.im { }
+
+code span.in { color: rgb(96, 160, 176); font-weight: bold; font-style: ita=
+lic; }
+
+code span.kw { color: rgb(0, 112, 32); font-weight: bold; }
+
+code span.op { color: rgb(102, 102, 102); }
+
+code span.ot { color: rgb(0, 112, 32); }
+
+code span.pp { color: rgb(188, 122, 0); }
+
+code span.sc { color: rgb(64, 112, 160); }
+
+code span.ss { color: rgb(187, 102, 136); }
+
+code span.st { color: rgb(64, 112, 160); }
+
+code span.va { color: rgb(25, 23, 124); }
+
+code span.vs { color: rgb(64, 112, 160); }
+
+code span.wa { color: rgb(96, 160, 176); font-weight: bold; font-style: ita=
+lic; }
+
+@media (prefers-color-scheme: dark) {
+  code span.al { color: rgb(149, 218, 76); font-weight: bold; }
+  code span.an { color: rgb(63, 128, 88); }
+  code span.at { color: rgb(41, 128, 185); }
+  code span.bn { color: rgb(246, 116, 0); }
+  code span.bu { color: rgb(127, 140, 141); }
+  code span.ch { color: rgb(61, 174, 233); }
+  code span.co { color: rgb(122, 124, 125); }
+  code span.cv { color: rgb(127, 140, 141); }
+  code span.cn { color: rgb(39, 174, 174); font-weight: bold; }
+  code span.cf { color: rgb(253, 188, 75); font-weight: bold; }
+  code span.dt { color: rgb(41, 128, 185); }
+  code span.dv { color: rgb(246, 116, 0); }
+  code span.do { color: rgb(164, 51, 64); }
+  code span.er { color: rgb(218, 68, 83); }
+  code span.ex { color: rgb(0, 153, 255); font-weight: bold; }
+  code span.fl { color: rgb(246, 116, 0); }
+  code span.fu { color: rgb(142, 68, 173); }
+  code span.im { color: rgb(39, 174, 96); }
+  code span.in { color: rgb(196, 91, 0); }
+  code span.kw { color: rgb(207, 207, 194); font-weight: bold; }
+  code span.op { color: rgb(207, 207, 194); }
+  code span.ot { color: rgb(39, 174, 96); }
+  code span.pp { color: rgb(39, 174, 96); }
+  code span.sc { color: rgb(61, 174, 233); }
+  code span.ss { color: rgb(218, 68, 83); }
+  code span.st { color: rgb(244, 79, 79); }
+  code span.va { color: rgb(39, 174, 174); }
+  code span.vs { color: rgb(218, 68, 83); }
+  code span.wa { color: rgb(218, 68, 83); }
+}
+------MultipartBoundary--4L5IOA8va70z9FNUz5otqt1DWDlIArFUo4wYUXUTsQ----
+Content-Type: image/svg+xml
+Content-Transfer-Encoding: quoted-printable
+Content-Location: https://wiki.libsdl.org/static_files/link.svg
+
+<svg xmlns=3D"http://www.w3.org/2000/svg" width=3D"24" height=3D"24" viewBo=
+x=3D"0 0 24 24" fill=3D"none" stroke=3D"currentColor" stroke-width=3D"2" st=
+roke-linecap=3D"round" stroke-linejoin=3D"round" class=3D"feather feather-l=
+ink"><path d=3D"M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71=
+"></path><path d=3D"M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71=
+-1.71"></path></svg>
+------MultipartBoundary--4L5IOA8va70z9FNUz5otqt1DWDlIArFUo4wYUXUTsQ------

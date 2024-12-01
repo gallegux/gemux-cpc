@@ -1,0 +1,14 @@
+LINUX
+=====
+sudo apt-get install libsdl2-image-dev libsdl2-dev
+
+
+WINDOWS
+=======
+(g++ en MinGW) Compilar usando la opción -mwindows:
+
+bash
+g++ -o miPrograma.exe miPrograma.cpp -lmingw32 -lSDL2main -lSDL2 -mwindows
+Explicación
+La opción -mwindows indica al compilador que el sub-sistema es de tipo ventana, eliminando la consola. 
+Esto es útil para aplicaciones que solo necesitan mostrar una interfaz gráfica.

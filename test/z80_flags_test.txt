@@ -1,0 +1,10 @@
+operaciones en las que los flags sin documentar no son bien calculados
+
+scf
+ccf
+rld
+rrd
+add hl,rr
+add ix,rr
+add iy,rr
+sbc hl,rr

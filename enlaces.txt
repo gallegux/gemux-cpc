@@ -1,0 +1,93 @@
+esp32
+-----
+https://thingpulse.com/esp32-how-to-use-psram/
+
+
+Esquema CPC:
+------------
+https://i0.wp.com/auamstrad.es/wp-content/uploads/2019/11/image-2.png?w=1000&ssl=1
+
+
+cinta
+-----
+https://www.alessandrogrussu.it/tapir/tzxform120.html
+
+
+PPI
+---
+https://www.cpcwiki.eu/index.php/How_to_access_the_PSG_via_PPI
+
+
+Registro R:
+-----------
+https://worldofspectrum.org/z88forever/dn327/z80undoc.htm
+
+
+IFF1 and IFF2: 
+--------------
+https://landley.net/history/mirror/cpm/z80.html
+http://www.z80.info/z80info.htm
+
+
+Flags indocumentados:
+---------------------
+http://www.z80.info/z80info.htm
+https://worldofspectrum.org/z88forever/dn327/z80undoc.htm
+
+
+CRTC/raster:
+-----
+https://www.cpcwiki.eu/index.php/Synchronising_with_the_CRTC_and_display
+https://www.cpcwiki.eu/index.php/CRTC
+https://grimware.org/doku.php/documentations/devices/crtc
+https://www.chibiakumas.com/z80/platform4.php#LessonP39
+https://cpcrulez.fr/coding_grimware-the_mighty_crtc_6845.htm
+
+
+Gate array:
+-----------
+https://grimware.org/doku.php/documentations/devices/gatearray
+https://cpctech.cpc-live.com/docs/garray.html
+https://www.grimware.org/doku.php/documentations/devices/gatearray#:~:text=CPC%20and%20Plus%20%3A-,Amstrad%20CPC,-On%20the%20CPC
+
+
+paginacion
+----------
+https://www.cpcwiki.eu/index.php/Standard_Memory_Expansions
+https://cpctech.cpc-live.com/docs/rampage.html
+
+
+ROM
+https://www.grimware.org/doku.php/documentations/devices/gatearray#:~:text=CPC%20and%20Plus%20%3A-,Amstrad%20CPC,-On%20the%20CPC
+
+
+Interrupciones:
+---------------
+http://galia.fc.uaslp.mx/~cantocar/microprocesadores/TUTORIALES/EL_MICRO_Z80/Z80APUNTES.HTM#:~:text=El%20microprocesador%20Z80%20posee%20dos%20l%C3%ADneas%20de%20entrada%20de%20interrupciones,permite%20hasta%20128%20interrupciones%20vectorizadas
+
+
+Control del bus:
+----------------
+http://galia.fc.uaslp.mx/~cantocar/microprocesadores/TUTORIALES/EL_MICRO_Z80/Z80APUNTES.HTM#:~:text=El%20microprocesador%20Z80%20posee%20dos%20l%C3%ADneas%20de%20entrada%20de%20interrupciones,permite%20hasta%20128%20interrupciones%20vectorizadas
+
+
+Generacion señal de video:
+--------------------------
+https://www.irespa.eu/daan/lib/howtoCPCemu.htm
+
+
+LilyGO:
+-------
+https://retrowiki.es/viewtopic.php?f=114&t=200036016&sid=456472d85449fb5bd6a33953f12cc0cf
+https://retrowiki.es/viewtopic.php?f=115&t=200038368
+
+
+
+Rom emulator:
+-------------
+https://github.com/kernelcrash/amstradcpc-rom-emulator
+
+
+
+ROM-DOS
+http://www.cantrell.org.uk/david/tech/cpc/ramdos/index.html?romdos

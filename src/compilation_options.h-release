@@ -1,0 +1,10 @@
+#pragma once
+
+
+// si al compilar se incluye mostrar las interrupciones en el borde
+#define _debug_ints_borde 1
+
+// para incluir codigo que traduce la instruccion del actual PC
+#define _instr_asm 1
+
+#define _PRINT_DEBUG 1
