@@ -1,6 +1,6 @@
 LINUX
 =====
-sudo apt-get install libsdl2-image-dev libsdl2-dev
+sudo apt-get install libsdl2-image-dev libsdl2-mixer-dev libsdl2-dev
 
 
 WINDOWS
