@@ -1,1 +1,4 @@
-git config --global user.name 
+git config --global user.name gallegux
+git config --global user.email gallegux@gmail.com
+
+luego pregunta en un navegador
