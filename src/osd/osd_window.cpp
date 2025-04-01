@@ -35,7 +35,7 @@
 #include "../log.h"
 
 
-#ifdef TARGET_WINDOWS
+#ifdef TARGET_PC
 extern bool GLOBAL_QUIT;
 #endif
 
@@ -85,7 +85,11 @@ void OSD_Window:: run() {
 	SDL_Scancode scancode;
 	finishRun = false;
 	
+	#ifdef TARGET_PC
     while (!GLOBAL_QUIT  &&  !finishRun) {
+	#else
+	while (!finishRun) {
+	#endif
 		SDL_PollEvent(&event);
 		scancode = SDL_GetScancodeFromKey(event.key.keysym.sym);
 
